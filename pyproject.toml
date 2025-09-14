@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lsf"
-version = "0.1.0"
+version = "0.1.1"
 description = "LSF Configuration Management CLI - A tool for pulling .claude and .lsf folders into projects"
 readme = "README.md"
 license = "MIT"

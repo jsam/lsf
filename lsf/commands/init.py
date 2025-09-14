@@ -12,7 +12,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 console = Console()
 
 # Repository URL
-LSF_REPO_URL = "git@github.com:jsam/lsf.git"
+LSF_REPO_URL = "https://github.com/jsam/lsf.git"
 
 
 @click.command(name="init")
