@@ -8,7 +8,7 @@ Welcome to the Living Specification Framework (LSF) documentation. LSF is an AI 
 |----------|-------------|
 | **[Getting Started](getting-started.md)** | Complete setup guide and first project tutorial |
 | **[Workflow Guide](workflow.md)** | LSF philosophy, methodology, and development cycle |
-| **[Commands Reference](commands.md)** | Detailed documentation of all LSF commands |
+| **[Claude Commands](claude-commands.md)** | Complete reference for AI agent workflow commands |
 
 ## What is LSF?
 
@@ -114,4 +114,4 @@ LSF is designed to be a living framework that evolves with best practices:
 
 **Want to understand the methodology?** → [Workflow Guide](workflow.md)
 
-**Need specific command help?** → [Commands Reference](commands.md)
+**Need Claude command reference?** → [Claude Commands](claude-commands.md)
