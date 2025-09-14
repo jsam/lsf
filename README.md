@@ -10,17 +10,17 @@ LSF is a AI coding agent workflow for test-spec driven development.
 
 ```bash
 # Run LSF directly without installation
-uvx --from git+ssh://git@github.com/jsam/lsf.git lsf init
+uvx --from git+https://github.com/jsam/lsf.git lsf init
 
 # Or with a shorter alias
-alias lsf="uvx --from git+ssh://git@github.com/jsam/lsf.git lsf"
+alias lsf="uvx --from git+https://github.com/jsam/lsf.git lsf"
 ```
 
 #### Using uv tool (Persistent installation)
 
 ```bash
 # Install LSF as a global tool
-uv tool install git+ssh://git@github.com/jsam/lsf.git
+uv tool install git+https://github.com/jsam/lsf.git
 
 # Now you can use lsf from anywhere
 lsf init
@@ -60,10 +60,10 @@ Or run directly with `uvx`:
 
 ```bash
 # One-time execution without installation
-uvx --from git+ssh://git@github.com/jsam/lsf.git lsf init
+uvx --from git+https://github.com/jsam/lsf.git lsf init
 
 # With options
-uvx --from git+ssh://git@github.com/jsam/lsf.git lsf init --backup --overwrite
+uvx --from git+https://github.com/jsam/lsf.git lsf init --backup --overwrite
 ```
 
 ### Command Options
@@ -103,7 +103,7 @@ for project in project1 project2 project3; do
 done
 
 # Run without installation using uvx
-uvx --from git+ssh://git@github.com/jsam/lsf.git lsf init --path ./my-project
+uvx --from git+https://github.com/jsam/lsf.git lsf init --path ./my-project
 ```
 
 ## Uninstallation
