@@ -1,0 +1,27 @@
+[project]
+name = "lsf"
+version = "0.1.0"
+description = "LSF Configuration Management CLI - A tool for pulling .claude and .lsf folders into projects"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [ { name = "LSF Team", email = "lsf@example.com" } ]
+requires-python = ">=3.12"
+dependencies = [
+    "loguru>=0.7.3",
+    "click>=8.1.7",
+    "rich>=13.7.0",
+    "pydantic>=2.5.0",
+    "gitpython>=3.1.40",
+    "tomli>=2.0.1",
+]
+
+[project.scripts]
+lsf = "lsf.cli:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.4",
+    "ruff>=0.9.5",
+]
