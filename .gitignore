@@ -287,3 +287,8 @@ pip-selfcheck.json
 
 # This should be removed when the template is actually being used
 uv.lock
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

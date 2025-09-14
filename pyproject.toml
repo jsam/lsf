@@ -1,9 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "lsf"
 version = "0.1.0"
 description = "LSF Configuration Management CLI - A tool for pulling .claude and .lsf folders into projects"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 authors = [ { name = "LSF Team", email = "lsf@example.com" } ]
 requires-python = ">=3.12"
 dependencies = [
@@ -17,6 +21,9 @@ dependencies = [
 
 [project.scripts]
 lsf = "lsf.cli:main"
+
+[tool.setuptools]
+packages = ["lsf", "lsf.commands"]
 
 [dependency-groups]
 dev = [
