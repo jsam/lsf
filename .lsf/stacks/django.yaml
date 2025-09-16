@@ -1,0 +1,98 @@
+name: Django
+description: Django web framework with modern Python practices
+category: backend
+language: python
+version: "5.0+"
+
+core_dependencies:
+  - django
+  - django-environ
+  - django-extensions
+  - django-debug-toolbar
+  - gunicorn
+  - whitenoise
+
+optional_dependencies:
+  celery:
+    - celery
+    - redis
+    - django-celery-beat
+    - flower
+  postgres:
+    - psycopg2-binary
+    - dj-database-url
+  pgvector:
+    - pgvector
+    - django-pgvector
+  rest_api:
+    - djangorestframework
+    - django-cors-headers
+    - drf-spectacular
+  auth:
+    - django-allauth
+    - djangorestframework-simplejwt
+
+architecture:
+  pattern: MTV (Model-Template-View)
+  layers:
+    - models: Database schema and business logic
+    - views: Request handling and response generation
+    - templates: HTML rendering (optional with API-only)
+    - serializers: Data transformation for APIs
+    - services: Business logic layer
+    - tasks: Async processing with Celery
+
+structure:
+  project_root:
+    - manage.py
+    - requirements/
+      - base.txt
+      - local.txt
+      - production.txt
+    - config/
+      - settings/
+        - base.py
+        - local.py
+        - production.py
+        - test.py
+      - urls.py
+      - wsgi.py
+      - asgi.py
+    - apps/
+      - core/
+      - api/
+      - users/
+    - static/
+    - media/
+    - templates/
+    - tests/
+    - docker/
+      - Dockerfile
+      - docker-compose.yml
+    - .env.example
+
+twelve_factor_principles:
+  - codebase: Single Git repository
+  - dependencies: requirements.txt files per environment
+  - config: django-environ for environment variables
+  - backing_services: Database, cache, queue as attached resources
+  - build_release_run: Docker for consistent deployment
+  - processes: Stateless with shared-nothing architecture
+  - port_binding: Gunicorn/ASGI server
+  - concurrency: Process model with Gunicorn workers
+  - disposability: Fast startup/shutdown, graceful termination
+  - dev_prod_parity: Docker for environment consistency
+  - logs: stdout/stderr with structured logging
+  - admin_processes: Django management commands
+
+best_practices:
+  - Use Django's built-in features (ORM, migrations, admin)
+  - Separate settings by environment
+  - Custom User model from the start
+  - Service layer for complex business logic
+  - Comprehensive test coverage with pytest-django
+  - API versioning strategy
+  - Database query optimization
+  - Security middleware configuration
+  - CORS configuration for APIs
+  - Celery for async tasks

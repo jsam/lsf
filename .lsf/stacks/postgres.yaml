@@ -1,0 +1,87 @@
+name: PostgreSQL
+description: Advanced open source relational database
+category: database
+language: sql
+version: "15+"
+
+core_dependencies:
+  python:
+    - psycopg2-binary
+    - asyncpg
+    - sqlalchemy
+  node:
+    - pg
+    - "@prisma/client"
+    - typeorm
+
+optional_dependencies:
+  extensions:
+    - pgvector
+    - postgis
+    - pg_trgm
+    - uuid-ossp
+    - hstore
+  migrations:
+    - alembic
+    - django-migrations
+    - prisma-migrate
+  monitoring:
+    - pg_stat_statements
+    - pgbadger
+    - pgwatch2
+
+architecture:
+  pattern: ACID-compliant Relational Database
+  components:
+    - schemas: Logical grouping of tables
+    - tables: Data storage structures
+    - indexes: Query optimization
+    - views: Virtual tables
+    - functions: Stored procedures
+    - triggers: Event-driven logic
+    - extensions: Additional capabilities
+
+structure:
+  project_root:
+    - migrations/
+      - versions/
+    - sql/
+      - schema/
+      - functions/
+      - triggers/
+      - seed/
+    - backups/
+    - scripts/
+      - backup.sh
+      - restore.sh
+      - maintenance.sh
+
+configuration:
+  performance:
+    - shared_buffers
+    - work_mem
+    - maintenance_work_mem
+    - effective_cache_size
+    - max_connections
+  replication:
+    - streaming_replication
+    - logical_replication
+    - wal_level
+    - max_wal_size
+  security:
+    - ssl_connections
+    - row_level_security
+    - column_encryption
+    - audit_logging
+
+best_practices:
+  - Use connection pooling
+  - Implement proper indexing strategy
+  - Regular VACUUM and ANALYZE
+  - Partition large tables
+  - Use prepared statements
+  - Monitor query performance
+  - Regular backups with testing
+  - Use transactions appropriately
+  - Implement proper constraints
+  - Document schema changes

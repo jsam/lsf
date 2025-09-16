@@ -1,0 +1,121 @@
+name: FastAPI
+description: FastAPI with async Python and modern API practices
+category: backend
+language: python
+version: "0.100+"
+
+core_dependencies:
+  - fastapi
+  - uvicorn
+  - pydantic
+  - pydantic-settings
+  - python-multipart
+  - httpx
+
+optional_dependencies:
+  database:
+    postgres:
+      - asyncpg
+      - sqlalchemy
+      - alembic
+    mongodb:
+      - motor
+      - beanie
+  celery:
+    - celery
+    - redis
+    - flower
+  auth:
+    - python-jose
+    - passlib
+    - python-multipart
+  monitoring:
+    - prometheus-client
+    - opentelemetry-api
+    - opentelemetry-sdk
+  testing:
+    - pytest
+    - pytest-asyncio
+    - pytest-cov
+    - httpx
+
+architecture:
+  pattern: Clean Architecture / Hexagonal
+  layers:
+    - api: HTTP endpoints and routing
+    - schemas: Pydantic models for validation
+    - services: Business logic layer
+    - repositories: Data access layer
+    - models: Database models
+    - core: Domain entities and use cases
+    - infrastructure: External services
+
+structure:
+  project_root:
+    - main.py
+    - requirements/
+      - base.txt
+      - dev.txt
+      - prod.txt
+    - .env.example
+    - alembic.ini
+    - app/
+      - __init__.py
+      - main.py
+      - api/
+        - __init__.py
+        - v1/
+          - endpoints/
+          - deps.py
+      - core/
+        - config.py
+        - security.py
+        - exceptions.py
+      - schemas/
+      - services/
+      - repositories/
+      - models/
+      - db/
+        - base.py
+        - session.py
+      - utils/
+      - middleware/
+    - migrations/
+    - tests/
+      - unit/
+      - integration/
+      - conftest.py
+    - docker/
+      - Dockerfile
+      - docker-compose.yml
+
+twelve_factor_principles:
+  - codebase: Single repository with version control
+  - dependencies: requirements files with pinned versions
+  - config: pydantic-settings for environment variables
+  - backing_services: Database, cache, queues as services
+  - build_release_run: Docker multi-stage builds
+  - processes: Stateless async workers
+  - port_binding: Uvicorn ASGI server
+  - concurrency: Async/await with multiple workers
+  - disposability: Fast startup, graceful shutdown
+  - dev_prod_parity: Docker for consistency
+  - logs: Structured JSON logging to stdout
+  - admin_processes: CLI commands for maintenance
+
+best_practices:
+  - Async/await throughout the application
+  - Pydantic for request/response validation
+  - Dependency injection system
+  - OpenAPI documentation auto-generation
+  - Repository pattern for data access
+  - Service layer for business logic
+  - Custom exception handling
+  - CORS middleware configuration
+  - Rate limiting and throttling
+  - JWT authentication with refresh tokens
+  - Database connection pooling
+  - Background tasks with BackgroundTasks
+  - Health check endpoints
+  - Prometheus metrics endpoint
+  - Comprehensive async testing

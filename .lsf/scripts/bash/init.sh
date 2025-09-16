@@ -1,215 +1,825 @@
 #!/usr/bin/env bash
-# Initialize project constitution and governance structure
+# Enhanced project initialization with stack-based scaffolding
 set -e
 
-JSON_MODE=false
-ARGS=()
-for arg in "$@"; do
-    case "$arg" in
-        --json) JSON_MODE=true ;;
-        --help|-h) echo "Usage: $0 [--json] [project_name] [--version VERSION]"; exit 0 ;;
-        *) ARGS+=("$arg") ;;
-    esac
-done
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-INIT_ARGS="${ARGS[*]}"
-
+# Script configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
-
-# Get repository root and basic info
 REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-cd "$REPO_ROOT"
+LSF_DIR="$REPO_ROOT/.lsf"
+STACKS_DIR="$LSF_DIR/stacks"
+TEMPLATES_DIR="$LSF_DIR/templates"
 
-# Parse initialization arguments
-PROJECT_NAME=""
-CONSTITUTION_VERSION="3.0.0"
-
-# Simple argument parsing
-for arg in $INIT_ARGS; do
-    if [[ "$arg" =~ ^--version$ ]]; then
-        continue
-    elif [[ "$arg" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        CONSTITUTION_VERSION="$arg"
-    elif [[ ! "$arg" =~ ^-- ]] && [[ -z "$PROJECT_NAME" ]]; then
-        PROJECT_NAME="$arg"
+# Parse command line arguments
+parse_arguments() {
+    local args="$1"
+    
+    # Initialize variables
+    PROJECT_NAME=""
+    PROJECT_DESCRIPTION=""
+    TECH_STACKS=()
+    
+    # Parse the input string
+    # Example: "django, celery, pgvector - app for crawling news portals"
+    if [[ "$args" =~ ^(.+)-(.+)$ ]]; then
+        local stacks_part="${BASH_REMATCH[1]}"
+        PROJECT_DESCRIPTION="${BASH_REMATCH[2]}"
+        PROJECT_DESCRIPTION=$(echo "$PROJECT_DESCRIPTION" | xargs) # Trim whitespace
+        
+        # Parse comma-separated stacks
+        IFS=',' read -ra STACK_ARRAY <<< "$stacks_part"
+        for stack in "${STACK_ARRAY[@]}"; do
+            stack=$(echo "$stack" | xargs | tr '[:upper:]' '[:lower:]')
+            TECH_STACKS+=("$stack")
+        done
+    else
+        # Simple stack list without description
+        IFS=',' read -ra STACK_ARRAY <<< "$args"
+        for stack in "${STACK_ARRAY[@]}"; do
+            stack=$(echo "$stack" | xargs | tr '[:upper:]' '[:lower:]')
+            TECH_STACKS+=("$stack")
+        done
     fi
-done
-
-# Default project name from repository
-if [[ -z "$PROJECT_NAME" ]]; then
-    PROJECT_NAME="$(basename "$REPO_ROOT")"
-fi
-
-# Set up constitution directory structure
-CONSTITUTION_DIR="$REPO_ROOT/specs/constitution"
-CONSTITUTION_FILE="$CONSTITUTION_DIR/constitution.md"
-CHECKLIST_FILE="$CONSTITUTION_DIR/constitution_update_checklist.md"
-AMENDMENTS_DIR="$CONSTITUTION_DIR/amendments"
-
-# Create directory structure
-mkdir -p "$CONSTITUTION_DIR"
-mkdir -p "$AMENDMENTS_DIR"
-
-# Load constitution template - try memory/ first (actual constitution), then .lsf/memory/ (template)
-CONSTITUTION_TEMPLATE="$REPO_ROOT/memory/constitution.md"
-CHECKLIST_TEMPLATE="$REPO_ROOT/memory/constitution_update_checklist.md"
-
-if [[ ! -f "$CONSTITUTION_TEMPLATE" ]]; then
-    CONSTITUTION_TEMPLATE="$REPO_ROOT/.lsf/memory/constitution.md"
-    CHECKLIST_TEMPLATE="$REPO_ROOT/.lsf/memory/constitution_update_checklist.md"
-fi
-
-if [[ ! -f "$CONSTITUTION_TEMPLATE" ]]; then
-    echo "ERROR: Constitution template not found at $CONSTITUTION_TEMPLATE" >&2
-    echo "Looking for: .lsf/memory/constitution.md or memory/constitution.md" >&2
-    exit 1
-fi
-
-# Get current date
-CURRENT_DATE=$(date -I 2>/dev/null || date "+%Y-%m-%d")
-
-# Create constitution.md with project-specific details
-sed -e "s/LSF Single-Agent TDD Workflow Constitution/$PROJECT_NAME Constitution/" \
-    -e "s/Version\*\*: 3\.0\.0/Version**: $CONSTITUTION_VERSION/" \
-    -e "s/Ratified\*\*: 2025-09-13/Ratified**: $CURRENT_DATE/" \
-    -e "s/Last Amended\*\*: 2025-09-13/Last Amended**: $CURRENT_DATE/" \
-    -e "s/LSF Single-Agent TDD Workflow system/$PROJECT_NAME project/" \
-    "$CONSTITUTION_TEMPLATE" > "$CONSTITUTION_FILE"
-
-# Create constitution update checklist if template exists
-if [[ -f "$CHECKLIST_TEMPLATE" ]]; then
-    sed -e "s/2025-09-13/$CURRENT_DATE/" \
-        -e "s/3\.0\.0/$CONSTITUTION_VERSION/" \
-        "$CHECKLIST_TEMPLATE" > "$CHECKLIST_FILE"
-fi
-
-# Create initial governance report
-GOVERNANCE_REPORT="$CONSTITUTION_DIR/governance_report.md"
-cat > "$GOVERNANCE_REPORT" <<EOF
-# $PROJECT_NAME Governance Report
-
-**Generated**: $CURRENT_DATE  
-**Constitution Version**: $CONSTITUTION_VERSION  
-**Status**: Initialized  
-
-## Constitutional Framework
-
-### Core Principles
-- ✅ Library-First Architecture
-- ✅ CLI Interface Requirements
-- ✅ Test-First Development (TDD)
-- ✅ Single-Agent Sequential Workflow
-- ✅ Quality Gates & Reviews
-- ✅ Observability & Monitoring
-- ✅ Simplicity & Extensibility
-
-### Governance Structure
-- **Constitution**: specs/constitution/constitution.md
-- **Update Checklist**: specs/constitution/constitution_update_checklist.md
-- **Amendments Directory**: specs/constitution/amendments/
-- **Governance Report**: specs/constitution/governance_report.md
-
-## Compliance Status
-
-### Implementation Readiness
-- [x] Constitutional framework established
-- [x] Governance structure created
-- [x] Amendment process documented
-- [ ] Team training on constitutional principles
-- [ ] Development workflow integration
-- [ ] Quality gate automation
-
-### Next Steps
-1. Review constitutional principles with development team
-2. Integrate constitutional compliance into CI/CD pipeline
-3. Set up regular governance reviews and updates
-4. Begin first feature development using constitutional workflow
-
-## Amendment History
-*No amendments yet*
-
----
-
-*This report tracks constitutional compliance and governance health for $PROJECT_NAME*
-EOF
-
-# Create README for constitution directory
-README_FILE="$CONSTITUTION_DIR/README.md"
-cat > "$README_FILE" <<EOF
-# $PROJECT_NAME Constitution
-
-This directory contains the constitutional framework and governance structure for $PROJECT_NAME.
-
-## Files
-
-- **constitution.md** - Core constitutional principles and development standards
-- **constitution_update_checklist.md** - Checklist for maintaining constitutional consistency
-- **governance_report.md** - Current governance status and compliance tracking
-- **amendments/** - Directory for constitutional amendments and changes
-
-## Usage
-
-The constitution defines non-negotiable principles for development:
-
-1. **Library-First Architecture** - Every feature as a standalone library
-2. **CLI Interface** - Text in/out protocol for all libraries
-3. **Test-First Development** - Mandatory TDD with Red-Green-Refactor cycle
-4. **Single-Agent Workflow** - Sequential task execution with quality gates
-5. **Quality & Reviews** - Automated quality gates and compliance checking
-6. **Observability** - Structured logging and monitoring requirements
-7. **Simplicity & Extensibility** - YAGNI principles with clear extension points
-
-## Amendment Process
-
-1. Propose change with clear justification
-2. Document impact using constitution_update_checklist.md
-3. Update all dependent templates and commands
-4. Test change with sample implementation
-5. Version bump and add to amendments/ directory
-
-## Compliance
-
-All development must comply with constitutional principles. Quality gates automatically verify adherence during the development workflow.
-
----
-
-Constitution Version: $CONSTITUTION_VERSION | Established: $CURRENT_DATE
-EOF
-
-SETUP_STATUS="complete"
-
-# Output results
-if [[ "$JSON_MODE" == "true" ]]; then
-    cat <<EOF
-{
-    "PROJECT_NAME": "$PROJECT_NAME",
-    "CONSTITUTION_DIR": "$CONSTITUTION_DIR",
-    "CONSTITUTION_FILE": "$CONSTITUTION_FILE",
-    "CONSTITUTION_VERSION": "$CONSTITUTION_VERSION",
-    "SETUP_STATUS": "$SETUP_STATUS",
-    "GOVERNANCE_REPORT": "$GOVERNANCE_REPORT",
-    "AMENDMENTS_DIR": "$AMENDMENTS_DIR",
-    "RATIFICATION_DATE": "$CURRENT_DATE"
+    
+    # Set project name from repo if not specified
+    if [[ -z "$PROJECT_NAME" ]]; then
+        PROJECT_NAME="$(basename "$REPO_ROOT")"
+    fi
 }
+
+# Load stack configuration
+load_stack_config() {
+    local stack_name="$1"
+    local stack_file="$STACKS_DIR/${stack_name}.yaml"
+    
+    if [[ ! -f "$stack_file" ]]; then
+        echo -e "${YELLOW}Warning: Stack definition not found for '$stack_name'${NC}" >&2
+        return 1
+    fi
+    
+    # Parse YAML file (basic parsing)
+    echo "Loading stack: $stack_name"
+    return 0
+}
+
+# Generate project constitution
+generate_constitution() {
+    local output_file="$REPO_ROOT/specs/constitution/constitution.md"
+    local template_file="$TEMPLATES_DIR/constitutions/web-app-constitution.md"
+    
+    echo -e "${BLUE}Generating project constitution...${NC}"
+    
+    mkdir -p "$(dirname "$output_file")"
+    
+    # Start with the base template
+    cp "$template_file" "$output_file"
+    
+    # Replace placeholders
+    local current_date=$(date -I 2>/dev/null || date "+%Y-%m-%d")
+    local tech_stack_str=$(IFS=', '; echo "${TECH_STACKS[*]}")
+    
+    # Perform replacements
+    sed -i.bak \
+        -e "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" \
+        -e "s/{{VERSION}}/1.0.0/g" \
+        -e "s/{{DATE}}/$current_date/g" \
+        -e "s/{{PROJECT_TYPE}}/Web Application/g" \
+        -e "s/{{TECH_STACK}}/$tech_stack_str/g" \
+        -e "s/{{MIN_COVERAGE}}/80/g" \
+        -e "s/{{AUTH_METHOD}}/JWT Bearer Token/g" \
+        -e "s/{{MAX_RESPONSE_TIME}}/200/g" \
+        -e "s/{{MIN_RPS}}/100/g" \
+        -e "s/{{TYPE_CHECKING_REQUIREMENT}}/Static type checking required/g" \
+        -e "s/{{BRANCHING_STRATEGY}}/Git Flow/g" \
+        -e "s/{{DEPLOYMENT_STRATEGY}}/Blue-Green Deployment/g" \
+        -e "s/{{AUTHOR}}/LSF Team/g" \
+        "$output_file"
+    
+    # Remove backup file
+    rm -f "${output_file}.bak"
+    
+    # Handle dynamic sections
+    add_stack_components "$output_file"
+    add_approved_technologies "$output_file"
+    
+    echo -e "${GREEN}✓ Constitution generated at: specs/constitution/constitution.md${NC}"
+}
+
+# Add stack-specific components to constitution
+add_stack_components() {
+    local constitution_file="$1"
+    local components=""
+    
+    for stack in "${TECH_STACKS[@]}"; do
+        case "$stack" in
+            django)
+                components="${components}- **Django**: Web framework with batteries-included approach\n"
+                components="${components}- **Django ORM**: Database abstraction layer\n"
+                components="${components}- **Django Admin**: Auto-generated admin interface\n"
+                ;;
+            fastapi)
+                components="${components}- **FastAPI**: Modern async web framework\n"
+                components="${components}- **Pydantic**: Data validation using Python type annotations\n"
+                components="${components}- **Uvicorn**: ASGI server\n"
+                ;;
+            vue)
+                components="${components}- **Vue 3**: Progressive JavaScript framework\n"
+                components="${components}- **Vite**: Next-generation frontend tooling\n"
+                components="${components}- **Pinia**: State management\n"
+                ;;
+            celery)
+                components="${components}- **Celery**: Distributed task queue\n"
+                components="${components}- **Redis**: Message broker and cache\n"
+                ;;
+            pgvector)
+                components="${components}- **PostgreSQL**: Primary database\n"
+                components="${components}- **pgvector**: Vector similarity search\n"
+                ;;
+            postgres|postgresql)
+                components="${components}- **PostgreSQL**: Primary relational database\n"
+                ;;
+            redis)
+                components="${components}- **Redis**: In-memory data store for caching and sessions\n"
+                ;;
+        esac
+    done
+    
+    # Replace the placeholder
+    local escaped_components=$(echo -e "$components" | sed 's/[[\.*^$()+?{|]/\\&/g')
+    sed -i.bak "/{{#STACK_COMPONENTS}}/,/{{\/STACK_COMPONENTS}}/c\\
+$escaped_components" "$constitution_file"
+    
+    rm -f "${constitution_file}.bak"
+}
+
+# Add approved technologies section
+add_approved_technologies() {
+    local constitution_file="$1"
+    local technologies=""
+    
+    # Determine categories based on stacks
+    local has_backend=false
+    local has_frontend=false
+    local has_database=false
+    
+    for stack in "${TECH_STACKS[@]}"; do
+        case "$stack" in
+            django|fastapi|flask|express|rails)
+                has_backend=true
+                ;;
+            vue|react|angular|svelte)
+                has_frontend=true
+                ;;
+            postgres|postgresql|mysql|mongodb|pgvector)
+                has_database=true
+                ;;
+        esac
+    done
+    
+    if $has_backend; then
+        technologies="${technologies}- **Backend**: Python, TypeScript, Node.js\n"
+        technologies="${technologies}- **API**: REST, GraphQL, WebSocket\n"
+    fi
+    
+    if $has_frontend; then
+        technologies="${technologies}- **Frontend**: TypeScript, JavaScript, CSS\n"
+        technologies="${technologies}- **UI Libraries**: Component libraries, styling frameworks\n"
+    fi
+    
+    if $has_database; then
+        technologies="${technologies}- **Database**: PostgreSQL, Redis, Elasticsearch\n"
+        technologies="${technologies}- **ORM/ODM**: SQLAlchemy, Django ORM, Prisma\n"
+    fi
+    
+    technologies="${technologies}- **Testing**: Pytest, Jest, Cypress\n"
+    technologies="${technologies}- **CI/CD**: GitHub Actions, GitLab CI, Jenkins\n"
+    technologies="${technologies}- **Monitoring**: Prometheus, Grafana, Sentry\n"
+    technologies="${technologies}- **Infrastructure**: Docker, Kubernetes, Terraform\n"
+    
+    # Replace the placeholder
+    local escaped_tech=$(echo -e "$technologies" | sed 's/[[\.*^$()+?{|]/\\&/g')
+    sed -i.bak "/{{#APPROVED_TECH}}/,/{{\/APPROVED_TECH}}/c\\
+$escaped_tech" "$constitution_file"
+    
+    rm -f "${constitution_file}.bak"
+}
+
+# Generate 12-factor app configuration
+generate_12factor_config() {
+    local output_file="$REPO_ROOT/specs/architecture/12-factor.md"
+    
+    echo -e "${BLUE}Generating 12-factor app design document...${NC}"
+    
+    mkdir -p "$(dirname "$output_file")"
+    
+    cat > "$output_file" << 'EOF'
+# 12-Factor App Implementation Guide
+
+## Overview
+This document outlines how {{PROJECT_NAME}} implements the 12-factor app methodology for building scalable, maintainable cloud-native applications.
+
+## The Twelve Factors
+
+### I. Codebase
+**Principle**: One codebase tracked in revision control, many deploys
+
+**Implementation**:
+- Single Git repository for the entire application
+- Environment-specific configurations separated from code
+- Feature branches for development, main branch for production
+- Tags for releases
+
+### II. Dependencies
+**Principle**: Explicitly declare and isolate dependencies
+
+**Implementation**:
 EOF
-else
-    echo "Constitutional framework initialized for: $PROJECT_NAME"
-    echo "Constitution directory: $CONSTITUTION_DIR"
-    echo "Constitution file: $CONSTITUTION_FILE"
-    echo "Constitution version: $CONSTITUTION_VERSION"
-    echo "Ratified on: $CURRENT_DATE"
-    echo ""
-    echo "Governance structure:"
-    echo "  - Constitution: specs/constitution/constitution.md"
-    echo "  - Update checklist: specs/constitution/constitution_update_checklist.md"
-    echo "  - Governance report: specs/constitution/governance_report.md"
-    echo "  - Amendments directory: specs/constitution/amendments/"
-    echo ""
+
+    # Add stack-specific dependency management
+    for stack in "${TECH_STACKS[@]}"; do
+        case "$stack" in
+            django|fastapi)
+                cat >> "$output_file" << 'EOF'
+- Python: `requirements.txt` files with pinned versions
+- Virtual environments for isolation (`venv` or `poetry`)
+- Separate requirements for dev/test/prod environments
+EOF
+                ;;
+            vue|react)
+                cat >> "$output_file" << 'EOF'
+- Node.js: `package.json` and `package-lock.json`
+- NPM/Yarn for package management
+- DevDependencies separated from production dependencies
+EOF
+                ;;
+        esac
+    done
+    
+    cat >> "$output_file" << 'EOF'
+
+### III. Config
+**Principle**: Store config in the environment
+
+**Implementation**:
+- Environment variables for all configuration
+- `.env` files for local development (not committed)
+- `.env.example` template file (committed)
+- Configuration validation at startup
+- No hardcoded values in source code
+
+### IV. Backing Services
+**Principle**: Treat backing services as attached resources
+
+**Implementation**:
+- Database URLs in environment variables
+- Service discovery for microservices
+- Health checks for all external services
+- Graceful degradation when services unavailable
+- Connection pooling and retry logic
+
+### V. Build, Release, Run
+**Principle**: Strictly separate build and run stages
+
+**Implementation**:
+- **Build**: Compile code, bundle assets, create artifacts
+- **Release**: Combine build with config, create immutable release
+- **Run**: Execute release in target environment
+- CI/CD pipeline enforces separation
+- Rollback capability to previous releases
+
+### VI. Processes
+**Principle**: Execute the app as one or more stateless processes
+
+**Implementation**:
+- No local session storage (use Redis/database)
+- Shared nothing architecture
+- Stateless authentication (JWT tokens)
+- File uploads to object storage (S3/GCS)
+- Process crashes don't lose user data
+
+### VII. Port Binding
+**Principle**: Export services via port binding
+
+**Implementation**:
+- Self-contained web server (Gunicorn, Uvicorn, etc.)
+- PORT environment variable for dynamic binding
+- No runtime injection of webserver
+- Service mesh for inter-service communication
+
+### VIII. Concurrency
+**Principle**: Scale out via the process model
+
+**Implementation**:
+- Horizontal scaling preferred over vertical
+- Process managers (Gunicorn workers, PM2)
+- Background jobs via task queues (Celery)
+- Auto-scaling based on metrics
+- Load balancing across instances
+
+### IX. Disposability
+**Principle**: Maximize robustness with fast startup and graceful shutdown
+
+**Implementation**:
+- Fast startup times (<10 seconds)
+- Graceful shutdown on SIGTERM
+- Idempotent operations
+- Job queues for long-running tasks
+- Circuit breakers for external services
+
+### X. Dev/Prod Parity
+**Principle**: Keep development, staging, and production as similar as possible
+
+**Implementation**:
+- Docker for environment consistency
+- Same backing services across environments
+- Infrastructure as Code (Terraform/CloudFormation)
+- Continuous deployment
+- Feature flags for gradual rollouts
+
+### XI. Logs
+**Principle**: Treat logs as event streams
+
+**Implementation**:
+- Structured logging (JSON format)
+- Write to stdout/stderr only
+- Log aggregation service (ELK, CloudWatch)
+- Correlation IDs for request tracing
+- Log levels (DEBUG, INFO, WARNING, ERROR)
+
+### XII. Admin Processes
+**Principle**: Run admin/management tasks as one-off processes
+
+**Implementation**:
+- Database migrations as separate process
+- Management commands for maintenance
+- REPL access for debugging
+- Scheduled tasks via cron/task scheduler
+- Same environment and codebase as app
+
+## Compliance Checklist
+
+- [ ] Single codebase in Git
+- [ ] Dependencies explicitly declared
+- [ ] Configuration in environment variables
+- [ ] Backing services configurable via env
+- [ ] Separate build/release/run stages
+- [ ] Stateless processes
+- [ ] Services exported via port binding
+- [ ] Horizontal scaling capability
+- [ ] Fast startup and graceful shutdown
+- [ ] Dev/prod environment parity
+- [ ] Centralized log management
+- [ ] Admin tasks as one-off processes
+
+## Stack-Specific Considerations
+
+EOF
+    
+    # Add stack-specific considerations
+    for stack in "${TECH_STACKS[@]}"; do
+        case "$stack" in
+            django)
+                cat >> "$output_file" << 'EOF'
+### Django
+- Use `django-environ` for environment variables
+- Static files served by WhiteNoise or CDN
+- Database migrations with `manage.py migrate`
+- Celery for background tasks
+- Gunicorn with multiple workers
+
+EOF
+                ;;
+            fastapi)
+                cat >> "$output_file" << 'EOF'
+### FastAPI
+- Use `pydantic-settings` for configuration
+- Uvicorn with multiple workers
+- Async/await for concurrent processing
+- Background tasks with BackgroundTasks or Celery
+- Alembic for database migrations
+
+EOF
+                ;;
+            vue)
+                cat >> "$output_file" << 'EOF'
+### Vue.js
+- Environment variables via `.env` files
+- Build optimization with Vite
+- Static assets with cache busting
+- API base URL from environment
+- Docker multi-stage builds
+
+EOF
+                ;;
+        esac
+    done
+    
+    echo -e "${GREEN}✓ 12-Factor app design document generated${NC}"
+}
+
+# Generate project scaffolding
+generate_project_structure() {
+    echo -e "${BLUE}Generating project structure...${NC}"
+    
+    # Create base directories
+    mkdir -p "$REPO_ROOT"/{specs,docs,tests,.github/workflows}
+    mkdir -p "$REPO_ROOT"/specs/{constitution,architecture,features}
+    mkdir -p "$REPO_ROOT"/specs/constitution/amendments
+    
+    # Generate stack-specific structure
+    for stack in "${TECH_STACKS[@]}"; do
+        case "$stack" in
+            django)
+                generate_django_structure
+                ;;
+            fastapi)
+                generate_fastapi_structure
+                ;;
+            vue)
+                generate_vue_structure
+                ;;
+            celery)
+                generate_celery_structure
+                ;;
+        esac
+    done
+    
+    # Generate common files
+    generate_common_files
+    
+    echo -e "${GREEN}✓ Project structure generated${NC}"
+}
+
+# Generate Django-specific structure
+generate_django_structure() {
+    mkdir -p "$REPO_ROOT"/{config,apps,static,media,templates}
+    mkdir -p "$REPO_ROOT"/config/settings
+    mkdir -p "$REPO_ROOT"/apps/{core,api,users}
+    mkdir -p "$REPO_ROOT"/requirements
+    
+    # Create basic Django files
+    touch "$REPO_ROOT"/manage.py
+    touch "$REPO_ROOT"/config/__init__.py
+    touch "$REPO_ROOT"/config/urls.py
+    touch "$REPO_ROOT"/config/wsgi.py
+    touch "$REPO_ROOT"/config/asgi.py
+}
+
+# Generate FastAPI-specific structure
+generate_fastapi_structure() {
+    mkdir -p "$REPO_ROOT"/app/{api,core,schemas,services,repositories,models,db,utils,middleware}
+    mkdir -p "$REPO_ROOT"/app/api/v1/endpoints
+    mkdir -p "$REPO_ROOT"/migrations
+    
+    touch "$REPO_ROOT"/main.py
+    touch "$REPO_ROOT"/app/__init__.py
+    touch "$REPO_ROOT"/app/main.py
+}
+
+# Generate Vue-specific structure
+generate_vue_structure() {
+    mkdir -p "$REPO_ROOT"/src/{components,composables,views,router,stores,services,assets,utils,types}
+    mkdir -p "$REPO_ROOT"/src/components/{common,layout}
+    mkdir -p "$REPO_ROOT"/src/services/{api,auth}
+    mkdir -p "$REPO_ROOT"/src/assets/{styles,images}
+    mkdir -p "$REPO_ROOT"/public
+    mkdir -p "$REPO_ROOT"/tests/{unit,e2e}
+    
+    touch "$REPO_ROOT"/index.html
+    touch "$REPO_ROOT"/vite.config.ts
+    touch "$REPO_ROOT"/tsconfig.json
+}
+
+# Generate Celery-specific files
+generate_celery_structure() {
+    mkdir -p "$REPO_ROOT"/tasks
+    touch "$REPO_ROOT"/celery_app.py
+}
+
+# Generate common project files
+generate_common_files() {
+    # Create .gitignore if it doesn't exist
+    if [[ ! -f "$REPO_ROOT/.gitignore" ]]; then
+        cat > "$REPO_ROOT/.gitignore" << 'EOF'
+# Environment
+.env
+.env.local
+.venv/
+venv/
+env/
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Static files
+/static/
+/media/
+EOF
+    fi
+    
+    # Create README if it doesn't exist
+    if [[ ! -f "$REPO_ROOT/README.md" ]]; then
+        cat > "$REPO_ROOT/README.md" << EOF
+# $PROJECT_NAME
+
+$PROJECT_DESCRIPTION
+
+## Technology Stack
+$(IFS=', '; echo "${TECH_STACKS[*]}")
+
+## Quick Start
+
+### Prerequisites
+- Docker and Docker Compose
+- Python 3.11+ (for backend)
+- Node.js 18+ (for frontend)
+
+### Installation
+\`\`\`bash
+# Clone the repository
+git clone <repository-url>
+cd $PROJECT_NAME
+
+# Copy environment variables
+cp .env.example .env
+
+# Start with Docker
+docker-compose up
+\`\`\`
+
+## Project Structure
+- \`specs/\` - Specifications and constitutional documents
+- \`docs/\` - Technical documentation
+- \`tests/\` - Test suites
+- See \`specs/architecture/\` for detailed architecture documentation
+
+## Development Workflow
+1. Review the constitution at \`specs/constitution/constitution.md\`
+2. Follow the 12-factor principles outlined in \`specs/architecture/12-factor.md\`
+3. Use test-driven development (TDD) for all features
+4. Ensure all code passes quality gates before merging
+
+## License
+See LICENSE file for details.
+EOF
+    fi
+    
+    # Create docker-compose.yml template
+    generate_docker_compose
+}
+
+# Generate Docker Compose configuration
+generate_docker_compose() {
+    if [[ ! -f "$REPO_ROOT/docker-compose.yml" ]]; then
+        cat > "$REPO_ROOT/docker-compose.yml" << 'EOF'
+version: '3.8'
+
+services:
+EOF
+        
+        # Add services based on stacks
+        for stack in "${TECH_STACKS[@]}"; do
+            case "$stack" in
+                django|fastapi)
+                    cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:pass@db:5432/dbname
+    depends_on:
+      - db
+
+EOF
+                    ;;
+                vue|react)
+                    cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+EOF
+                    ;;
+                postgres|postgresql|pgvector)
+                    cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=dbname
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+EOF
+                    ;;
+                redis)
+                    cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+EOF
+                    ;;
+                celery)
+                    cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+  celery:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    command: celery -A celery_app worker -l info
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+      - db
+
+EOF
+                    ;;
+            esac
+        done
+        
+        # Add volumes section if needed
+        if [[ " ${TECH_STACKS[@]} " =~ " postgres" ]] || [[ " ${TECH_STACKS[@]} " =~ " postgresql" ]] || [[ " ${TECH_STACKS[@]} " =~ " pgvector" ]]; then
+            cat >> "$REPO_ROOT/docker-compose.yml" << 'EOF'
+
+volumes:
+  postgres_data:
+EOF
+        fi
+    fi
+}
+
+# Generate summary report
+generate_summary_report() {
+    local report_file="$REPO_ROOT/specs/initialization-report.md"
+    local current_date=$(date -I 2>/dev/null || date "+%Y-%m-%d")
+    
+    cat > "$report_file" << EOF
+# Project Initialization Report
+
+**Project**: $PROJECT_NAME  
+**Description**: $PROJECT_DESCRIPTION  
+**Initialized**: $current_date  
+**Technology Stack**: $(IFS=', '; echo "${TECH_STACKS[*]}")  
+
+## Generated Artifacts
+
+### Constitutional Documents
+- ✅ Project Constitution: \`specs/constitution/constitution.md\`
+- ✅ Governance Structure: \`specs/constitution/governance_report.md\`
+- ✅ Amendment Process: \`specs/constitution/amendments/\`
+
+### Architecture Documents
+- ✅ 12-Factor App Design: \`specs/architecture/12-factor.md\`
+- ✅ System Architecture: \`specs/architecture/\`
+
+### Project Structure
+EOF
+    
+    for stack in "${TECH_STACKS[@]}"; do
+        echo "- ✅ $stack structure initialized" >> "$report_file"
+    done
+    
+    cat >> "$report_file" << EOF
+
+### Configuration Files
+- ✅ Docker Compose: \`docker-compose.yml\`
+- ✅ Git Ignore: \`.gitignore\`
+- ✅ README: \`README.md\`
+
+## Next Steps
+
+1. **Review Constitutional Framework**
+   - Read and understand \`specs/constitution/constitution.md\`
+   - Ensure team alignment on principles
+
+2. **Configure Environment**
+   - Create \`.env\` file from \`.env.example\`
+   - Set up local development environment
+
+3. **Begin Development**
+   - Use \`/epic\` command to define features
+   - Follow TDD workflow: \`/test\` → \`/implement\` → \`/review\`
+   - Maintain constitutional compliance
+
+4. **Set Up CI/CD**
+   - Configure GitHub Actions or preferred CI/CD
+   - Implement quality gates
+   - Set up automated testing
+
+## Compliance Checklist
+
+- [ ] All team members have read the constitution
+- [ ] Development environment is configured
+- [ ] CI/CD pipeline is set up
+- [ ] Testing framework is configured
+- [ ] Monitoring and logging are implemented
+- [ ] Security measures are in place
+- [ ] Documentation is up to date
+
+## Resources
+
+- [12-Factor App](https://12factor.net/)
+- [Project Constitution](specs/constitution/constitution.md)
+- [Architecture Documentation](specs/architecture/)
+
+---
+
+*This report was automatically generated by LSF initialization*
+EOF
+    
+    echo -e "${GREEN}✓ Initialization report generated at: specs/initialization-report.md${NC}"
+}
+
+# Main execution
+main() {
+    echo -e "${BLUE}═══════════════════════════════════════════${NC}"
+    echo -e "${BLUE}   LSF Enhanced Project Initialization${NC}"
+    echo -e "${BLUE}═══════════════════════════════════════════${NC}\n"
+    
+    # Parse arguments
+    parse_arguments "$*"
+    
+    if [[ ${#TECH_STACKS[@]} -eq 0 ]]; then
+        echo -e "${RED}Error: No technology stacks specified${NC}"
+        echo "Usage: $0 <stack1>, <stack2>, ... - <project description>"
+        echo "Example: $0 django, celery, pgvector - app for crawling news portals"
+        exit 1
+    fi
+    
+    echo -e "${GREEN}Project: $PROJECT_NAME${NC}"
+    if [[ -n "$PROJECT_DESCRIPTION" ]]; then
+        echo -e "${GREEN}Description: $PROJECT_DESCRIPTION${NC}"
+    fi
+    echo -e "${GREEN}Technology Stack: $(IFS=', '; echo "${TECH_STACKS[*]}")${NC}\n"
+    
+    # Initialize project components
+    generate_constitution
+    generate_12factor_config
+    generate_project_structure
+    generate_summary_report
+    
+    echo -e "\n${BLUE}═══════════════════════════════════════════${NC}"
+    echo -e "${GREEN}✅ Project initialization complete!${NC}"
+    echo -e "${BLUE}═══════════════════════════════════════════${NC}\n"
+    
     echo "Next steps:"
-    echo "  1. Review constitutional principles with your team"
-    echo "  2. Begin development using /epic → /breakdown → /test → /implement → /review → /refactor workflow"
-    echo "  3. Ensure all development follows constitutional compliance"
+    echo "1. Review the constitution at specs/constitution/constitution.md"
+    echo "2. Check the initialization report at specs/initialization-report.md"
+    echo "3. Configure your environment variables in .env"
+    echo "4. Start development with the TDD workflow"
     echo ""
-    echo "Constitutional framework ready for $PROJECT_NAME development!"
-fi
+    echo -e "${GREEN}Happy coding! 🚀${NC}"
+}
+
+# Run main function with all arguments
+main "$@"

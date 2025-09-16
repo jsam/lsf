@@ -1,117 +1,178 @@
 # LSF Documentation
 
-Welcome to the Living Specification Framework (LSF) documentation. LSF is an AI coding agent workflow for test-spec driven development.
+Welcome to the Living Specification Framework (LSF) documentation. LSF is an AI coding agent workflow for test-spec driven development with constitutional governance.
 
 ## Quick Navigation
 
-| Document | Description |
-|----------|-------------|
-| **[Getting Started](getting-started.md)** | Complete setup guide and first project tutorial |
-| **[Workflow Guide](workflow.md)** | LSF philosophy, methodology, and development cycle |
-| **[Claude Commands](claude-commands.md)** | Complete reference for AI agent workflow commands |
+| Document | Purpose | Best For |
+|----------|---------|----------|
+| **[Getting Started](getting-started.md)** | Complete setup guide and first project tutorial | New users, project setup |
+| **[Workflow Guide](workflow.md)** | LSF philosophy, methodology, and development cycle | Understanding the methodology |
+| **[Claude Commands](claude-commands.md)** | Complete reference for AI agent workflow commands | Command reference |
+| **[Command Usage Guide](command-usage-guide.md)** | ⭐ Comprehensive examples for maximum accuracy | Daily usage, best practices |
+| **[Quick Reference](command-quick-reference.md)** | ⭐ Concise command syntax and examples | Quick lookup, cheat sheet |
+| **[Workflow Integration](workflow-integration-patterns.md)** | ⭐ Advanced patterns and integration strategies | Complex projects, team workflows |
 
-## What is LSF?
+## Command Usage Documentation (New!)
 
-LSF is a systematic approach to software development that combines:
+### 🎯 For Maximum Accuracy and Results
 
-- **Test-Spec-First Development**: Write specifications and tests before implementation
-- **Constitutional Governance**: Consistent development principles across projects
-- **AI Agent Integration**: Optimized workflows for AI-assisted development
-- **Quality Assurance**: Built-in validation and compliance checking
+The new command usage documentation provides:
 
-## Quick Start
+- **Detailed Examples**: Real-world usage patterns for each command
+- **Context-Specific Tips**: How to provide the right information for better results
+- **Integration Patterns**: How commands work together in different scenarios
+- **Best Practices**: Proven approaches for quality outcomes
+- **Troubleshooting**: Common issues and solutions
 
+### 📚 Three Levels of Documentation
+
+1. **[Command Usage Guide](command-usage-guide.md)** - Complete reference with detailed examples and explanations
+2. **[Quick Reference](command-quick-reference.md)** - Concise syntax guide for daily use  
+3. **[Workflow Integration](workflow-integration-patterns.md)** - Advanced patterns for complex scenarios
+
+## Enhanced `/init` Command
+
+The `/init` command has been completely reworked to provide:
+
+- **Stack-Based Scaffolding**: Technology-specific project structures
+- **Constitutional Framework**: Governance and quality standards
+- **12-Factor Compliance**: Cloud-native best practices
+- **Complete Bootstrap**: Docker, CI/CD, testing, and documentation
+
+### Usage Examples
 ```bash
-# Initialize your project with LSF
-uvx --from git+https://github.com/jsam/lsf.git lsf init
+# Django web application
+/init django, postgres, redis - e-commerce platform
 
-# Review your project's constitution
-cat specs/constitution/constitution.md
+# AI/ML application  
+/init fastapi, pgvector, celery - document search engine
 
-# Start building with test-spec methodology
+# Full-stack SaaS
+/init vue, django, postgres, redis - analytics dashboard
 ```
 
-## Core Components
+## Command Workflow
 
-### 1. Command Line Interface
-- `lsf init`: Initialize projects with standard LSF structure
-- Simple, focused tooling for essential workflow setup
+LSF follows a structured development workflow:
 
-### 2. Project Structure
-- `.claude/`: AI agent configurations and templates
-- `.lsf/`: Project-specific scripts and configuration
-- `specs/`: Specifications and constitutional governance
+```
+/init → /epic → /breakdown → /test → /implement → /review → /refactor
+```
 
-### 3. Constitutional Framework
-- Core development principles (TDD, observability, etc.)
-- Quality standards and validation gates
-- Governance processes and amendment procedures
+Each command builds on the previous one, creating a systematic approach to feature development with built-in quality assurance.
 
-### 4. AI Agent Integration
+## Key Features
+
+### Constitutional Governance
+- Project-specific constitutional framework
+- Non-negotiable principles (TDD, security, performance)
+- Quality gates and compliance checking
+- Amendment process for governance evolution
+
+### Test-Driven Development
+- Mandatory TDD workflow with Red-Green-Refactor cycle
+- Comprehensive test generation before implementation
+- Quality gates enforce test coverage and code quality
+- Constitutional compliance for all code changes
+
+### AI Agent Optimization
 - Structured templates for consistent AI interactions
-- Clear workflows that AI agents can follow systematically
-- Quality gates to ensure AI-generated code meets standards
+- Clear context and specifications for AI agents
+- Quality validation to ensure AI-generated code meets standards
+- Systematic workflow that AI agents can follow reliably
 
-## Development Philosophy
+### Technology Stack Support
+- Pre-configured stacks: Django, FastAPI, Vue, React, PostgreSQL, Celery
+- Technology-specific constitutional rules and best practices
+- Docker and CI/CD setup for each stack combination
+- 12-factor app compliance built into all configurations
 
-LSF follows these core principles:
+## Getting Started
 
-1. **Specifications First**: Every feature starts with clear user stories and requirements
-2. **Tests Before Code**: Comprehensive tests written before implementation
-3. **Constitutional Compliance**: All development follows established principles
-4. **AI Collaboration**: Optimized workflows for human-AI development teams
-5. **Quality Gates**: Automated validation ensures consistent standards
+### For New Projects
+1. **Initialize**: `/init <stacks> - <description>`
+2. **Review**: Check `specs/constitution/constitution.md`
+3. **Start Development**: Use `/epic` for your first feature
 
-## Use Cases
+### For Existing Projects  
+1. **Add LSF**: Run `lsf init` to add configuration folders
+2. **Review Examples**: Check the command usage guide
+3. **Begin Workflow**: Start with `/epic` for new features
 
-### For Development Teams
-- Standardize workflows across projects and team members
-- Ensure consistent quality through constitutional governance
-- Reduce onboarding time with clear, documented processes
-- Maintain predictable development outcomes
+### For Teams
+1. **Constitutional Review**: Align on governance principles
+2. **Training**: Review workflow integration patterns
+3. **Standards**: Establish command usage conventions
+4. **Quality Gates**: Set up automated compliance checking
 
-### For AI-Assisted Development
-- Provide clear context and structure for AI coding agents
-- Enable systematic, repeatable development processes  
-- Ensure AI-generated code meets quality standards
-- Facilitate human oversight and validation
+## What's New
 
-### for Organizations
-- Scale development practices across multiple teams
-- Implement systematic risk mitigation and quality control
-- Capture institutional knowledge and best practices
-- Maintain compliance with development standards
+### ✨ Recent Improvements
 
-## Getting Help
+- **Enhanced `/init` Command**: Complete project bootstrap with stack-based scaffolding
+- **Comprehensive Usage Examples**: Real-world patterns for maximum command accuracy
+- **Advanced Workflow Patterns**: Integration strategies for complex development scenarios
+- **Constitutional Templates**: Technology-specific governance frameworks
+- **12-Factor Integration**: Built-in cloud-native compliance
 
-- **New to LSF?** Start with [Getting Started](getting-started.md)
-- **Understanding the methodology?** Read the [Workflow Guide](workflow.md)
-- **Need command details?** Check the [Commands Reference](commands.md)
-- **Having issues?** Use `lsf --debug` for detailed logging
-- **Contributing?** Check the main repository for contribution guidelines
+### 📈 Quality Improvements
 
-## Examples and Templates
+- **Better Test Coverage**: Enhanced testing framework with multiple scenarios
+- **Linting Compliance**: All code passes quality checks
+- **Documentation Completeness**: Comprehensive guides for all aspects
+- **Validation Testing**: Examples verified against actual command specifications
 
-Once you initialize a project with `lsf init`, you'll have access to:
+## Architecture Overview
 
-- **Epic Templates**: Structured specification formats
-- **Test Templates**: Testing patterns and frameworks
-- **Code Templates**: Consistent code organization patterns
-- **AI Commands**: Pre-configured workflows for AI agents
+LSF consists of:
+
+### Core Components
+- **CLI Tool**: `lsf init` for project setup
+- **Claude Commands**: AI agent workflow commands in `.claude/commands/`
+- **Scripts**: Bash scripts in `.lsf/scripts/bash/` for execution
+- **Templates**: Markdown templates in `.lsf/templates/` for consistency
+- **Stacks**: Technology definitions in `.lsf/stacks/` for scaffolding
+
+### Workflow Integration
+- **Sequential Execution**: Commands build on each other's outputs
+- **Quality Gates**: Automated checking at each stage
+- **Constitutional Compliance**: All activities follow project governance
+- **Traceability**: Requirements → Tasks → Tests → Code → Review
+
+### AI Agent Support
+- **Structured Context**: Clear specifications and constraints
+- **Quality Validation**: Automated checking of AI-generated outputs
+- **Systematic Process**: Repeatable workflows for consistent results
+- **Human Oversight**: Review and approval gates for critical decisions
 
 ## Community and Contribution
 
-LSF is designed to be a living framework that evolves with best practices:
+LSF is designed to be a living framework:
 
-- Constitutional amendments allow governance to evolve
-- Template sharing enables pattern reuse across projects
-- Workflow documentation captures institutional knowledge
-- Community feedback drives framework improvements
+- **Constitutional Evolution**: Governance can be amended as projects mature
+- **Template Sharing**: Reusable patterns across projects and teams
+- **Best Practice Capture**: Institutional knowledge embedded in documentation
+- **Community Feedback**: Framework improves based on real-world usage
+
+## Support and Resources
+
+### Getting Help
+- **Command Issues**: Use `--debug` flag for detailed logging
+- **Usage Questions**: Check the comprehensive usage guide
+- **Integration Problems**: Review workflow integration patterns
+- **Best Practices**: Follow the quick reference guide
+
+### Contributing
+- **Bug Reports**: Use GitHub issues for problems
+- **Documentation**: Suggest improvements for clarity
+- **New Features**: Propose constitutional amendments
+- **Templates**: Share successful patterns and configurations
 
 ---
 
-**Ready to get started?** → [Getting Started Guide](getting-started.md)
+**Ready to start?** → [Command Usage Guide](command-usage-guide.md) for comprehensive examples
 
-**Want to understand the methodology?** → [Workflow Guide](workflow.md)
+**Need quick reference?** → [Quick Reference](command-quick-reference.md) for syntax and tips
 
-**Need Claude command reference?** → [Claude Commands](claude-commands.md)
+**Advanced usage?** → [Workflow Integration Patterns](workflow-integration-patterns.md) for complex scenarios

@@ -1,0 +1,81 @@
+name: Celery
+description: Distributed task queue for async processing
+category: infrastructure
+language: python
+version: "5.3+"
+
+core_dependencies:
+  - celery
+  - redis
+  - kombu
+  - billiard
+  - amqp
+
+optional_dependencies:
+  monitoring:
+    - flower
+    - celery-prometheus-exporter
+  scheduling:
+    - celery-redbeat
+    - django-celery-beat
+  brokers:
+    rabbitmq:
+      - pika
+    redis:
+      - redis
+      - hiredis
+  results_backend:
+    - django-celery-results
+    - sqlalchemy
+
+architecture:
+  pattern: Producer-Consumer with Message Broker
+  components:
+    - broker: Message queue (Redis/RabbitMQ)
+    - workers: Task execution processes
+    - beat: Periodic task scheduler
+    - flower: Real-time monitoring
+    - producer: Application sending tasks
+    - backend: Results storage
+
+structure:
+  project_root:
+    - celery_app.py
+    - celeryconfig.py
+    - tasks/
+      - __init__.py
+      - email_tasks.py
+      - data_tasks.py
+      - scheduled_tasks.py
+    - workers/
+      - default.py
+      - priority.py
+      - scheduled.py
+
+configuration:
+  broker_settings:
+    - connection_pool
+    - visibility_timeout
+    - message_compression
+    - serialization
+  worker_settings:
+    - concurrency
+    - prefetch_multiplier
+    - max_tasks_per_child
+    - task_time_limit
+  routing:
+    - task_routes
+    - task_queues
+    - queue_priority
+
+best_practices:
+  - Idempotent task design
+  - Task retry strategies
+  - Dead letter queues
+  - Task result expiration
+  - Separate queues by priority
+  - Worker pool optimization
+  - Memory leak prevention
+  - Monitoring and alerting
+  - Graceful shutdown handling
+  - Task signature patterns

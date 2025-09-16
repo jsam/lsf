@@ -1,0 +1,115 @@
+name: Vue
+description: Vue.js 3 with TypeScript and modern tooling
+category: frontend
+language: typescript
+version: "3.4+"
+
+core_dependencies:
+  - vue
+  - vue-router
+  - pinia
+  - "@vitejs/plugin-vue"
+  - vite
+  - typescript
+  - "@vue/tsconfig"
+
+optional_dependencies:
+  ui_framework:
+    vuetify:
+      - vuetify
+      - "@mdi/font"
+    primevue:
+      - primevue
+      - primeicons
+    element_plus:
+      - element-plus
+  testing:
+    - vitest
+    - "@vue/test-utils"
+    - "@testing-library/vue"
+    - cypress
+  api:
+    - axios
+    - "@tanstack/vue-query"
+  forms:
+    - vee-validate
+    - yup
+  i18n:
+    - vue-i18n
+
+architecture:
+  pattern: Component-Based Architecture
+  layers:
+    - components: Reusable UI components
+    - composables: Shared logic and state
+    - views: Page-level components
+    - stores: Global state management (Pinia)
+    - services: API communication layer
+    - utils: Helper functions and utilities
+    - types: TypeScript type definitions
+
+structure:
+  project_root:
+    - index.html
+    - package.json
+    - tsconfig.json
+    - vite.config.ts
+    - .env.example
+    - src/
+      - main.ts
+      - App.vue
+      - components/
+        - common/
+        - layout/
+      - composables/
+      - views/
+      - router/
+        - index.ts
+        - guards.ts
+      - stores/
+      - services/
+        - api/
+        - auth/
+      - assets/
+        - styles/
+        - images/
+      - utils/
+      - types/
+    - public/
+    - tests/
+      - unit/
+      - e2e/
+    - docker/
+      - Dockerfile
+      - nginx.conf
+
+twelve_factor_principles:
+  - codebase: Single Git repository with CI/CD
+  - dependencies: package.json with lock file
+  - config: Environment variables via .env files
+  - backing_services: APIs as external services
+  - build_release_run: Vite build process
+  - processes: Stateless SPA
+  - port_binding: Dev server port configuration
+  - concurrency: Not applicable (browser-based)
+  - disposability: Fast build and deployment
+  - dev_prod_parity: Consistent build tools
+  - logs: Console output and error tracking
+  - admin_processes: npm scripts for maintenance
+
+best_practices:
+  - Composition API with <script setup>
+  - TypeScript for type safety
+  - Component naming conventions (PascalCase)
+  - Props validation with TypeScript
+  - Composables for reusable logic
+  - Pinia for state management
+  - API service layer abstraction
+  - Route-based code splitting
+  - Lazy loading components
+  - CSS scoping strategies
+  - Comprehensive testing strategy
+  - Error boundary components
+  - Performance optimization (tree-shaking, chunks)
+  - Accessibility (a11y) compliance
+  - Progressive Web App capabilities

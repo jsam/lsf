@@ -1,0 +1,85 @@
+name: pgvector
+description: PostgreSQL extension for vector similarity search
+category: database
+language: sql
+version: "0.5+"
+requires: postgres
+
+core_dependencies:
+  python:
+    - pgvector
+    - psycopg2-binary
+    - sqlalchemy
+    - numpy
+  extensions:
+    - vector
+
+optional_dependencies:
+  ml_frameworks:
+    - openai
+    - langchain
+    - sentence-transformers
+    - transformers
+  indexing:
+    - faiss
+    - annoy
+  orm_support:
+    - django-pgvector
+    - sqlmodel
+
+architecture:
+  pattern: Vector Database for Similarity Search
+  components:
+    - vector_columns: Store embeddings
+    - indexes: HNSW, IVFFlat
+    - distance_functions: L2, Cosine, Inner Product
+    - operators: Vector operations
+
+structure:
+  project_root:
+    - migrations/
+      - add_vector_extension.sql
+      - create_embeddings_table.sql
+    - models/
+      - embeddings.py
+      - vector_search.py
+    - services/
+      - embedding_service.py
+      - search_service.py
+    - scripts/
+      - generate_embeddings.py
+      - build_indexes.py
+
+configuration:
+  index_types:
+    ivfflat:
+      - lists: Number of clusters
+      - probes: Search accuracy
+    hnsw:
+      - m: Max connections per node
+      - ef_construction: Build quality
+      - ef_search: Search quality
+  performance:
+    - maintenance_work_mem: For index building
+    - max_parallel_workers: For parallel queries
+    - work_mem: For sorting
+
+use_cases:
+  - Semantic search
+  - Recommendation systems
+  - Image similarity
+  - Document retrieval
+  - Anomaly detection
+  - Clustering
+
+best_practices:
+  - Normalize vectors before storage
+  - Choose appropriate dimension size
+  - Use appropriate index type
+  - Batch insert operations
+  - Pre-filter with WHERE clauses
+  - Monitor index performance
+  - Regular index maintenance
+  - Use appropriate distance metrics
+  - Implement hybrid search
+  - Cache frequently used embeddings

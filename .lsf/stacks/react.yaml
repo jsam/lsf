@@ -1,0 +1,112 @@
+name: React
+description: React 18 with TypeScript and modern tooling
+category: frontend
+language: typescript
+version: "18.0+"
+
+core_dependencies:
+  - react
+  - react-dom
+  - react-router-dom
+  - "@vitejs/plugin-react"
+  - vite
+  - typescript
+  - "@types/react"
+  - "@types/react-dom"
+
+optional_dependencies:
+  state_management:
+    redux:
+      - "@reduxjs/toolkit"
+      - "react-redux"
+    zustand:
+      - zustand
+    mobx:
+      - mobx
+      - mobx-react-lite
+  ui_framework:
+    mui:
+      - "@mui/material"
+      - "@emotion/react"
+      - "@emotion/styled"
+    antd:
+      - antd
+    chakra:
+      - "@chakra-ui/react"
+  testing:
+    - vitest
+    - "@testing-library/react"
+    - "@testing-library/user-event"
+    - cypress
+  api:
+    - axios
+    - "@tanstack/react-query"
+    - swr
+  forms:
+    - react-hook-form
+    - yup
+    - zod
+
+architecture:
+  pattern: Component-Based with Hooks
+  layers:
+    - components: Reusable UI components
+    - hooks: Custom React hooks
+    - pages: Route-level components
+    - contexts: React Context providers
+    - services: API and business logic
+    - utils: Helper functions
+    - types: TypeScript definitions
+
+structure:
+  project_root:
+    - index.html
+    - package.json
+    - tsconfig.json
+    - vite.config.ts
+    - .env.example
+    - src/
+      - main.tsx
+      - App.tsx
+      - components/
+        - common/
+        - layout/
+        - features/
+      - hooks/
+      - pages/
+      - contexts/
+      - services/
+        - api/
+        - auth/
+      - assets/
+      - utils/
+      - types/
+    - public/
+    - tests/
+    - docker/
+
+twelve_factor_principles:
+  - codebase: Single repository
+  - dependencies: package.json with lock file
+  - config: Environment variables
+  - backing_services: APIs as services
+  - build_release_run: Vite build pipeline
+  - processes: Stateless SPA
+  - port_binding: Dev server configuration
+  - concurrency: Browser-based
+  - disposability: Fast builds
+  - dev_prod_parity: Consistent tooling
+  - logs: Console and error tracking
+  - admin_processes: npm scripts
+
+best_practices:
+  - Functional components with hooks
+  - TypeScript for type safety
+  - Component composition patterns
+  - Custom hooks for logic reuse
+  - Context for global state
+  - Memoization for performance
+  - Code splitting with lazy loading
+  - Error boundaries
+  - Accessibility compliance
+  - Testing with RTL
