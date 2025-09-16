@@ -20,6 +20,7 @@
    → Endpoints, request/response formats, error handling
 6. Identify technical dependencies
    → Libraries, frameworks, external services
+   → Secrets that need to provided prior to implementation and secure injection mechanism
 7. Define implementation strategy
    → Development phases, priorities, risk mitigation
 8. Generate task breakdown
