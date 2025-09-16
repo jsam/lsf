@@ -10,7 +10,7 @@ Given the project initialization parameters provided as an argument, do this:
    - Identify project type (web app, API, microservice, etc.) from the stacks
 
 2. **Run Enhanced Initialization Script**
-   - Execute `.lsf/scripts/bash/init-v2.sh "$ARGUMENTS"` from repo root
+   - Execute `.lsf/scripts/bash/init.sh "$ARGUMENTS"` from repo root
    - This will generate the complete project scaffold based on the technology stack
 
 3. **Generate Project Constitution**
