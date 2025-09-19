@@ -91,7 +91,7 @@ fi
 # Verify task dependencies are satisfied
 for task in "${SELECTED_TASKS[@]}"; do
     # Extract dependencies (simplified - in real implementation would be more robust)
-    deps=$(grep -A 10 "^### $task:" "$TASKS" | grep "Dependencies:" | sed 's/.*Dependencies: *//' | sed 's/[^P1-0-9, ]//g')
+    deps=$(grep -A 10 "^### $task:" "$TASKS" | grep "Dependencies:" | sed 's/.*Dependencies: *//' | sed 's/[^P10-9, -]//g')
     if [[ -n "$deps" && "$deps" != "None" ]]; then
         IFS=',' read -ra DEP_ARRAY <<< "$deps"
         for dep in "${DEP_ARRAY[@]}"; do
