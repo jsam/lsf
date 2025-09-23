@@ -13,19 +13,18 @@
    → Identify: actors, actions, business value, constraints
 3. For each unclear aspect:
    → Mark with [NEEDS CLARIFICATION: specific question]
+   → Suggest the minimal possible solution
 4. Fill User Stories section
    → If no clear user scenarios: ERROR "Cannot determine user value"
 5. Generate Functional Requirements
    → Each requirement must be testable and measurable
    → Mark ambiguous requirements for clarification
-6. Define Success Criteria
-   → Must be measurable business outcomes
-7. Identify Constraints
-   → Business, technical, regulatory, or timeline constraints
-8. Run Review Checklist
+6. Identify Constraints
+   → technical, regulatory, or timeline constraints
+7. Run Review Checklist
    → If any [NEEDS CLARIFICATION]: WARN "Epic has uncertainties"
    → If implementation details found: ERROR "Remove tech details from epic"
-9. Return: SUCCESS (epic ready for breakdown)
+8. Return: SUCCESS (epic ready for breakdown)
 ```
 
 ---
@@ -48,10 +47,7 @@ When creating this epic from a user prompt:
 3. **Think like a product owner**: Every vague requirement should fail the "measurable outcome" test
 4. **Common underspecified areas**:
    - Target user personas and their needs
-   - Business metrics and success criteria
-   - Competitive landscape and differentiation
    - Regulatory or compliance requirements
-   - Budget and timeline constraints
    - Integration with existing systems
 
 ---
@@ -83,21 +79,8 @@ When creating this epic from a user prompt:
 - **ER-005**: System MUST authenticate users [NEEDS CLARIFICATION: auth method, user types, security level?]
 - **ER-006**: System MUST handle [NEEDS CLARIFICATION: volume, performance targets, error scenarios?]
 
-## Success Criteria
-[Measurable business outcomes that define feature success]
-
-- **Adoption**: [e.g., "50% of target users use feature within 30 days"]
-- **Performance**: [e.g., "Task completion time reduced by 25%"]
-- **Business Impact**: [e.g., "Conversion rate increases by 10%"]
-- **Quality**: [e.g., "User satisfaction score > 4.0/5.0"]
-
 ## Constraints
 [Limitations that must be respected during implementation]
-
-### Business Constraints
-- Budget: [financial limitations]
-- Timeline: [delivery deadlines]
-- Resources: [team/skill limitations]
 
 ### Technical Constraints
 - Platform: [target platforms/environments]
