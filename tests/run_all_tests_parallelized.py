@@ -59,6 +59,28 @@ class TestRunner:
         print(f"{'✅' if success else '❌'} React Unit Tests: {'PASSED' if success else 'FAILED'}")
         return "React Unit Tests", success, output
 
+    def run_pytest(self):
+        """Execute Python unit tests with pytest."""
+        print("Starting: Python Unit Tests")
+
+        unit_dir = Path("tests/unit")
+        if not unit_dir.exists():
+            return "Python Unit Tests", True, "No unit tests directory found (OK for Phase 1)"
+
+        # Check if there are any test files
+        test_files = list(unit_dir.glob("test_*.py"))
+        if not test_files:
+            print("✅ Python Unit Tests: PASSED")
+            return "Python Unit Tests", True, "No unit test files found (OK for Phase 1)"
+
+        returncode, stdout, stderr = self.run_command("pytest tests/unit/ -v --tb=short")
+
+        success = returncode == 0
+        output = stdout if success else stderr
+
+        print(f"{'✅' if success else '❌'} Python Unit Tests: {'PASSED' if success else 'FAILED'}")
+        return "Python Unit Tests", success, output
+
     def run_build_tests_parallel(self):
         """Run build tests in parallel (no dependencies)."""
         build_tests = [
@@ -66,15 +88,16 @@ class TestRunner:
             ("Frontend Build", "tests/integration/frontend_workflows.py")
         ]
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
             futures = [
                 executor.submit(self.run_test, name, path)
                 for name, path in build_tests
             ]
 
-            # Also run React tests in parallel
+            # Also run React and Python unit tests in parallel
             react_future = executor.submit(self.run_react_tests)
-            futures.append(react_future)
+            pytest_future = executor.submit(self.run_pytest)
+            futures.extend([react_future, pytest_future])
 
             results = [future.result() for future in concurrent.futures.as_completed(futures)]
 
