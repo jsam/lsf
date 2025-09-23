@@ -56,6 +56,33 @@ run_test() {
     ((TOTAL_TESTS++))
 }
 
+# Function to run React unit tests
+run_react_tests() {
+    local test_name=$1
+
+    print_header "$test_name"
+
+    if [ -d "src/frontend" ]; then
+        cd src/frontend
+        npm test
+        local exit_code=$?
+        cd ../..
+
+        if [ $exit_code -eq 0 ]; then
+            print_color "$GREEN" "✅ $test_name PASSED"
+            ((PASSED_TESTS++))
+        else
+            print_color "$RED" "❌ $test_name FAILED"
+            ((FAILED_TESTS++))
+        fi
+    else
+        print_color "$YELLOW" "⚠️ $test_name SKIPPED (frontend directory not found)"
+        ((FAILED_TESTS++))
+    fi
+
+    ((TOTAL_TESTS++))
+}
+
 # Main test execution
 main() {
     print_header "DOCKER INTEGRATION TEST SUITE"
@@ -113,9 +140,11 @@ main() {
     done
 
     # Run build tests
-    
+
     if [ "$RUN_BUILD_TESTS" = true ]; then
         run_test "Docker Build Tests" "tests/test_docker_build.py"
+        run_test "Frontend Build Tests" "tests/test_frontend_build.py"
+        run_react_tests "React Unit Tests"
     fi
 
     # Run runtime tests
@@ -128,6 +157,7 @@ main() {
 
             # Run health and functionality tests
             run_test "Service Health Checks" "tests/test_service_health.py"
+            run_test "API Integration Tests" "tests/test_api_integration.py"
             run_test "Celery Task Tests" "tests/test_celery_tasks.py"
         else
             # Run the runtime test which manages its own services
@@ -143,6 +173,7 @@ main() {
 
             # Run additional tests
             run_test "Service Health Checks" "tests/test_service_health.py"
+            run_test "API Integration Tests" "tests/test_api_integration.py"
             run_test "Celery Task Tests" "tests/test_celery_tasks.py"
 
             # Clean up if not keeping services running

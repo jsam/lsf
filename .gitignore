@@ -291,3 +291,35 @@ uv.lock
 dist/
 build/
 *.egg-info/
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Frontend build outputs
+src/frontend/dist/
+src/frontend/build/
+src/frontend/.vite/
+
+# Frontend environment files
+src/frontend/.env
+src/frontend/.env.local
+src/frontend/.env.development.local
+src/frontend/.env.test.local
+src/frontend/.env.production.local
+
+# Testing outputs
+coverage/
+.nyc_output/
+test-results/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Docker development
+data/
+logs/
