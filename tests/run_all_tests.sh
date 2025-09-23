@@ -75,7 +75,10 @@ main() {
 
     # Clean up docker env
     #Remove ALL containers (running and stopped):
-    docker rm -f $(docker ps -aq)
+    CONTAINERS=$(docker ps -aq)
+    if [ -n "$CONTAINERS" ]; then
+        docker rm -f $CONTAINERS
+    fi
 
     while [[ $# -gt 0 ]]; do
         case $1 in
