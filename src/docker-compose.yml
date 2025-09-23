@@ -49,6 +49,15 @@ services:
     volumes:
       - redis_data:/data
 
+  # React frontend
+  frontend:
+    build: ./frontend
+    restart: always
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+
   # PostgreSQL database
   db:
     image: postgres:15-alpine
@@ -59,8 +68,6 @@ services:
       - POSTGRES_USER=django_user
       - POSTGRES_PASSWORD=django_password
       - POSTGRES_DB=django_db
-    ports:
-      - "5432:5432"
 
 volumes:
   postgres_data:
