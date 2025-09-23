@@ -7,9 +7,9 @@
 ### Backend (Django/Python)
 **Location**: `src/`
 **Stack**: Django 4.2+ / Python 3.x / PostgreSQL / Celery / Redis
-**Dependencies**: `src/requirements.txt` (10 core packages)
+**Dependencies**: `src/requirements.txt` (core packages)
 **Architecture**: Django MVT pattern with Celery async tasks
-**Data Models**: 12 domain models (Employee, Ticket, TimeBooking, etc.)
+**Data Models**: Django ORM models in `src/core/models/`
 **Deployment**: Docker containers via docker-compose
 
 ### Frontend (React/TypeScript)
@@ -90,11 +90,11 @@ tests/
 
 ### Endpoint Patterns
 ```
-GET    /api/tasks/           # List
-POST   /api/tasks/           # Create
-GET    /api/tasks/{id}/      # Retrieve
-PUT    /api/tasks/{id}/      # Update
-DELETE /api/tasks/{id}/      # Delete
+GET    /api/{resource}/           # List
+POST   /api/{resource}/           # Create
+GET    /api/{resource}/{id}/      # Retrieve
+PUT    /api/{resource}/{id}/      # Update
+DELETE /api/{resource}/{id}/      # Delete
 ```
 
 ### Request Format
@@ -126,9 +126,9 @@ DELETE /api/tasks/{id}/      # Delete
 ## Data Model Boundaries
 
 ### Relationship Rules
-- **CASCADE**: Employee deletion → cascade TimeBookings
-- **PROTECT**: BillingProject deletion → protect if TimeBookings exist
-- **SET_NULL**: Optional relationships (Team → null)
+- **CASCADE**: Parent deletion → cascade dependent records
+- **PROTECT**: Prevent deletion if dependencies exist
+- **SET_NULL**: Optional relationships → null on deletion
 - **Many-to-Many**: Through explicit junction models only
 
 ### Migration Rules
@@ -144,7 +144,7 @@ DELETE /api/tasks/{id}/      # Delete
 ## Performance Boundaries
 
 ### Response Times
-- CRUD operations: <1s (verify: `time curl -s http://localhost:8000/api/tasks/`)
+- CRUD operations: <1s (verify: `time curl -s http://localhost:8000/api/{endpoint}/`)
 - Complex queries: <5s (verify: `pytest --benchmark`)
 - Test suite: <2min (verify: `time tests/run_all_tests_parallelized.py`)
 
