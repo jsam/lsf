@@ -10,6 +10,8 @@
 
 This constitution establishes the fundamental principles, architecture, and governance for the {{PROJECT_NAME}} project. All development activities, architectural decisions, and operational practices must comply with these constitutional principles.
 
+The purpose of the software factory is to produce industry grade software in a highly automated fashion using LLMs. This means it should be able to reproducably create, iteratively extend and maintain complex business software applications. All parts of this constitution should be red with this target in mind. Trade-offs between parts of the constitution and principles are weighted based on this goal.
+
 ## Article 0: Agentic Development Principles
 1. **Context Efficiency**: Context is limited and precious, only provide relevant information
 2. **Minimalism**: Complexity is cost, always try to reduce features and assumptions to the minimum scope that remains compliant with the provided requirements.

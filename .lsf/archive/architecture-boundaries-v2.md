@@ -1,4 +1,4 @@
-# Architecture Boundaries & Decision Space v2
+te# Architecture Boundaries & Decision Space v2
 
 **Purpose**: Agent reference document defining existing architecture boundaries and technology constraints for discriminator/critic agents.
 

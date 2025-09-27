@@ -1,0 +1,41 @@
+# Non-Functional Requirements Template
+# Agent-optimized technical constraints for implementation decisions
+
+performance:
+  concurrent_users: 100          # Peak concurrent active users
+  response_time_p95: 500ms       # 95th percentile response time
+  throughput_rps: 50             # Requests per second sustained
+  cpu_utilization: 70%           # Maximum CPU usage target
+  memory_usage: 512MB            # Maximum memory per service
+
+scalability:
+  data_volume: 10GB              # Maximum data storage
+  database_connections: 50       # Max concurrent DB connections
+  file_upload_size: 10MB         # Maximum single file size
+  horizontal_scale: 3            # Maximum service replicas
+
+availability:
+  uptime: 99.0%                  # Service availability target
+  recovery_time: 5m              # Maximum recovery time
+  backup_frequency: 24h          # Data backup interval
+
+security:
+  session_timeout: 30m           # User session expiry
+  password_policy: standard      # bcrypt, 8+ chars, alphanumeric
+  rate_limiting: 100/h           # API calls per hour per user
+  encryption: AES256             # Data encryption standard
+
+compatibility:
+  browsers: ["chrome>=90", "firefox>=85", "safari>=14"]
+  mobile_support: responsive     # responsive|native|none
+  api_version: v1                # API versioning scheme
+
+deployment:
+  container_startup: 30s         # Maximum container boot time
+  zero_downtime: false           # Rolling deployment capability
+  environment_parity: true       # dev/staging/prod consistency
+
+monitoring:
+  health_check_interval: 30s     # Service health check frequency
+  log_retention: 30d             # Log storage duration
+  metrics_resolution: 1m        # Monitoring data granularity
