@@ -3,6 +3,16 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import UserMenu from '../src/components/navigation/UserMenu'
 import type { UserInfo } from '../src/components/layout/MenuTypes'
 
+// Mock window.location.href to avoid jsdom navigation errors
+Object.defineProperty(window, 'location', {
+  writable: true,
+  value: {
+    href: 'http://localhost:3000',
+    assign: vi.fn(),
+    replace: vi.fn(),
+  }
+})
+
 describe('UserMenu', () => {
   const sampleUser: UserInfo = {
     name: 'John Doe',
