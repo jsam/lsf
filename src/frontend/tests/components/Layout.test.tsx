@@ -1,40 +1,44 @@
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import Layout from '../../src/components/Layout'
+import AdminLayout from '../../src/components/layout/AdminLayout'
 
-const LayoutWithRouter = ({ children }: { children: React.ReactNode }) => (
+const AdminLayoutWithRouter = ({ children }: { children: React.ReactNode }) => (
   <BrowserRouter>
-    <Layout>{children}</Layout>
+    <AdminLayout>{children}</AdminLayout>
   </BrowserRouter>
 )
 
-describe('Layout', () => {
-  test('renders navigation with title', () => {
-    render(
-      <LayoutWithRouter>
+describe('AdminLayout', () => {
+  test('renders layout structure', () => {
+    const { container } = render(
+      <AdminLayoutWithRouter>
         <div>Test content</div>
-      </LayoutWithRouter>
+      </AdminLayoutWithRouter>
     )
 
-    expect(screen.getByText('Django Celery App')).toBeInTheDocument()
+    // Check for layout structure elements
+    expect(container.querySelector('.layout-container')).toBeInTheDocument()
+    expect(container.querySelector('.layout-sidebar')).toBeInTheDocument()
+    expect(container.querySelector('.layout-main')).toBeInTheDocument()
   })
 
-  test('renders navigation links', () => {
+  test('renders navigation items', () => {
     render(
-      <LayoutWithRouter>
+      <AdminLayoutWithRouter>
         <div>Test content</div>
-      </LayoutWithRouter>
+      </AdminLayoutWithRouter>
     )
 
+    // Check for navigation items
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
     expect(screen.getByText('Tasks')).toBeInTheDocument()
   })
 
   test('renders children content', () => {
     render(
-      <LayoutWithRouter>
+      <AdminLayoutWithRouter>
         <div>Test content</div>
-      </LayoutWithRouter>
+      </AdminLayoutWithRouter>
     )
 
     expect(screen.getByText('Test content')).toBeInTheDocument()

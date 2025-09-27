@@ -1,8 +1,12 @@
+import Card from '../components/ui/Card'
+
 function Dashboard() {
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>System overview and health status</p>
+    <div className="dashboard-container">
+      <h1 className="page-title">Dashboard</h1>
+      <Card title="System Overview">
+        <p>System overview and health status</p>
+      </Card>
     </div>
   )
 }
