@@ -2,9 +2,9 @@
 
 ## User Outcomes
 What users can do with this feature:
-- [ ] User can [ACTION] to achieve [RESULT]
-- [ ] User can [ACTION] when [CONDITION] occurs
-- [ ] User sees [FEEDBACK] after [ACTION]
+- [OUT-001] User can [ACTION] to achieve [RESULT]
+- [OUT-002] User can [ACTION] when [CONDITION] occurs
+- [OUT-003] User sees [FEEDBACK] after [ACTION]
 
 ## Success Criteria
 Feature works when:

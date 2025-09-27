@@ -2,13 +2,13 @@
 
 ## Integration Tests
 
-TEST-001: [REQ-001]
+TEST-001: [REQ-001→OUT-XXX]
 - Input: [EXACT_INPUT_DATA]
 - Action: [API_CALL|USER_ACTION]
 - Expected: [EXACT_OUTPUT]
 - Verify: `pytest tests/integration/test_[feature].py::test_001`
 
-TEST-002: [REQ-002]
+TEST-002: [REQ-002→OUT-XXX]
 - Input: [EXACT_INPUT_DATA]
 - Action: [API_CALL|USER_ACTION]
 - Expected: [EXACT_OUTPUT]
@@ -16,7 +16,7 @@ TEST-002: [REQ-002]
 
 ## Contract Tests
 
-TEST-101: [REQ-101]
+TEST-101: [REQ-101→OUT-XXX]
 - Endpoint: [URL_PATH]
 - Method: [GET|POST|PUT|DELETE]
 - Payload: [JSON_STRUCTURE]
@@ -25,7 +25,7 @@ TEST-101: [REQ-101]
 
 ## Load Tests
 
-TEST-301: [REQ-301]
+TEST-301: [REQ-301→OUT-XXX]
 - Scenario: [LOAD_PATTERN]
 - Concurrency: [NUMBER]
 - Duration: [TIME]
@@ -34,7 +34,7 @@ TEST-301: [REQ-301]
 
 ## Failure Tests
 
-TEST-401: [REQ-XXX]
+TEST-401: [REQ-XXX→OUT-XXX]
 - Failure: [SYSTEM_COMPONENT]
 - Behavior: [EXPECTED_DEGRADATION]
 - Recovery: [TIME_TO_RECOVER]

@@ -39,15 +39,21 @@ For each requirement:
 
 ### User Outcome → Requirement Mapping
 ```
-Pattern: "User can [ACTION]"
+Pattern: "[OUT-XXX] User can [ACTION]"
 → Identify: What Django/React component handles this?
-→ Output: REQ-XXX: [COMPONENT] handles [ACTION]
+→ Output: REQ-YYY: [OUT-XXX] - [COMPONENT] handles [ACTION]
 
 Example:
-User: "User can login with credentials"
-→ REQ-001: Django auth.authenticate() validates credentials
-→ REQ-002: Django session stores authentication state
+[OUT-001] User can login with credentials
+→ REQ-001: [OUT-001] - Django auth.authenticate() validates credentials
+→ REQ-002: [OUT-001] - Django session stores authentication state
 ```
+
+### Outcome ID Preservation Rules
+- Every [OUT-XXX] from human-spec.md MUST generate at least one REQ
+- Each REQ must reference exactly one [OUT-XXX]
+- One outcome may generate multiple requirements
+- Format: `REQ-XXX: [OUT-YYY]` where YYY is source outcome ID
 
 ### Requirement → Test Mapping
 ```
@@ -87,7 +93,7 @@ REQ-001: Django auth.authenticate() validates credentials
 
 ### requirements.md Structure
 ```markdown
-REQ-001:
+REQ-001: [OUT-XXX]
 - Constraint: [WHAT must be done]
 - Component: [EXISTING component from architecture-boundaries-v3.md]
 - Acceptance: [MEASURABLE criteria]
@@ -103,9 +109,11 @@ TEST-001: [REQ-001]
 ```
 
 ## Validation Checklist
-- [ ] Every user outcome → at least one requirement
+- [ ] Every [OUT-XXX] from human-spec.md → at least one requirement
+- [ ] Every requirement → references exactly one [OUT-XXX]
 - [ ] Every requirement → references existing component
 - [ ] Every requirement → 1-3 tests maximum
+- [ ] No orphaned outcomes (all [OUT-XXX] referenced)
 - [ ] No custom implementations without justification
 - [ ] No business language in outputs
 - [ ] All IDs are unique and sequential
@@ -137,15 +145,15 @@ TEST-001: [REQ-001]
 ### Complete Transformation
 ```
 Input (human-spec.md):
-"User can view list of tasks"
+[OUT-001] User can view list of tasks
 
 Output (requirements.md):
-REQ-001:
+REQ-001: [OUT-001]
 - Constraint: Retrieve task list from database
 - Component: Django ORM with pagination
 - Acceptance: Returns list in <1s
 
-REQ-002:
+REQ-002: [OUT-001]
 - Constraint: Display task list in UI
 - Component: React component with Axios
 - Acceptance: Renders without errors
@@ -164,8 +172,27 @@ TEST-002: [REQ-002]
 - Verify: `npm test -- TaskList.test.tsx`
 ```
 
+## Traceability Validation
+Run these checks before finalizing:
+```bash
+# Extract all outcome IDs from human spec
+grep -o '\[OUT-[0-9]\+\]' human-spec.md | sort -u > outcomes.txt
+
+# Extract all outcome references from requirements
+grep -o '\[OUT-[0-9]\+\]' requirements.md | sort -u > referenced.txt
+
+# Verify all outcomes are covered
+diff outcomes.txt referenced.txt  # Should be empty
+
+# Verify no requirement lacks outcome reference
+grep '^REQ-' requirements.md | grep -v '\[OUT-' # Should return nothing
+```
+
 ## Success Criteria
+- All [OUT-XXX] from human-spec.md traced to requirements
+- All requirements reference their source [OUT-XXX]
 - All requirements use existing components from architecture-boundaries-v3.md
 - Zero custom implementations without written justification
 - Test coverage matches requirement scope (no over-testing)
 - Output is machine-parseable without ambiguity
+- Complete traceability: Outcome → Requirement → Test
