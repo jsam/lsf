@@ -34,6 +34,35 @@
 - **Build**: Vite
 - **Type Checking**: TypeScript
 
+### Frontend Layout Components (Architecture Boundaries)
+**Location**: `src/frontend/src/components/`
+
+#### Layout Components
+- **AdminLayout**: `layout/AdminLayout.tsx` - Left sidebar + main content structure
+- **Sidebar**: `layout/Sidebar.tsx` - Collapsible navigation with icons
+- **Header**: `layout/Header.tsx` - Top bar with breadcrumbs and user actions
+- **MainContent**: `layout/MainContent.tsx` - Responsive content area
+
+#### UI Foundation Components
+- **Card**: `ui/Card.tsx` - Standard content container with optional title/actions
+- **Button**: `ui/Button.tsx` - Consistent button styling (primary/secondary/outline)
+- **Modal**: `ui/Modal.tsx` - Overlay system for forms/dialogs with focus management
+- **LoadingSpinner**: `ui/LoadingSpinner.tsx` - Standard loading state indicator
+- **Form**: `ui/Form.tsx` - Standardized form layout with loading states
+- **Input**: `ui/Input.tsx` - Text input with error states and validation
+- **Select**: `ui/Select.tsx` - Dropdown select with search and multi-select
+
+#### Navigation Components
+- **NavItem**: `navigation/NavItem.tsx` - Sidebar navigation item with icon
+- **Breadcrumbs**: `navigation/Breadcrumbs.tsx` - Path navigation component
+- **UserMenu**: `navigation/UserMenu.tsx` - Profile dropdown menu
+
+#### React Hooks (Utilities)
+- **useAuth**: `hooks/useAuth.ts` - User authentication state management
+- **useNavigation**: `hooks/useNavigation.ts` - Navigation state and breadcrumbs
+- **useModal**: `hooks/useModal.ts` - Modal state management
+- **useBreadcrumbs**: `hooks/useBreadcrumbs.ts` - Dynamic breadcrumb management
+
 ## Technology Stack Boundaries
 
 ### Backend (Django/Python)
@@ -441,6 +470,69 @@ pytest --benchmark                          # Code benchmarks
 ```bash
 pytest tests/unit/ -v                       # Unit tests
 python tests/run_all_tests_parallelized.py  # Full suite
+```
+
+## Frontend Component Usage Examples for Agents
+
+### Using AdminLayout
+```typescript
+// All admin pages MUST use AdminLayout from architecture boundaries
+import AdminLayout from '../components/layout/AdminLayout'
+
+function NewPage() {
+  return (
+    <AdminLayout>
+      {/* Page content here */}
+    </AdminLayout>
+  )
+}
+```
+
+### Using Card Component
+```typescript
+// Use Card for content grouping
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
+
+<Card
+  title="Section Title"
+  actions={<Button variant="primary">Action</Button>}
+>
+  {/* Card content */}
+</Card>
+```
+
+### Using Modal System
+```typescript
+// Use Modal with useModal hook
+import Modal from '../components/ui/Modal'
+import { useModal } from '../hooks/useModal'
+
+function Component() {
+  const modal = useModal()
+
+  return (
+    <>
+      <Button onClick={modal.open}>Open Modal</Button>
+      <Modal open={modal.isOpen} onClose={modal.close}>
+        {/* Modal content */}
+      </Modal>
+    </>
+  )
+}
+```
+
+### Using Form Components
+```typescript
+// Use Form, Input, Select from architecture boundaries
+import Form from '../components/ui/Form'
+import Input from '../components/ui/Input'
+import Select from '../components/ui/Select'
+
+<Form onSubmit={handleSubmit} loading={isLoading}>
+  <Input label="Name" error={errors.name} />
+  <Select label="Type" options={options} />
+</Form>
 ```
 
 ## Enforcement
