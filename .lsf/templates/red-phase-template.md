@@ -81,5 +81,5 @@ RED-VALIDATE-002: Verify test infrastructure is complete
 Layer: 3A
 Type: red-phase
 Input: requirements.md, test-cases.md
-Dependencies: architecture-boundaries-v3.md
+Dependencies: .lsf/memory/architecture-boundaries.md
 -->

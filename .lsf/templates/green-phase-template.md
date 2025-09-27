@@ -4,7 +4,7 @@
 
 GREEN-001: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: Django ORM (models.Model from architecture-boundaries-v3.md)
+- Component: Django ORM (models.Model from .lsf/memory/architecture-boundaries.md)
 - File Location: src/core/models.py
 - Implementation: [MODEL_NAME] with required fields
 - Configuration: Add to INSTALLED_APPS, run migrations
@@ -12,7 +12,7 @@ GREEN-001: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-002: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: Django API view (@api_view from architecture-boundaries-v3.md)
+- Component: Django API view (@api_view from .lsf/memory/architecture-boundaries.md)
 - File Location: src/[app]/views.py
 - Implementation: [ENDPOINT_NAME] function with validation
 - Configuration: Add URL pattern to urls.py
@@ -20,7 +20,7 @@ GREEN-002: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-003: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: Celery task (@shared_task from architecture-boundaries-v3.md)
+- Component: Celery task (@shared_task from .lsf/memory/architecture-boundaries.md)
 - File Location: src/[app]/tasks.py
 - Implementation: [TASK_NAME] function with error handling
 - Configuration: Import in celery.py autodiscover
@@ -28,7 +28,7 @@ GREEN-003: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-004: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: Django forms (forms.Form from architecture-boundaries-v3.md)
+- Component: Django forms (forms.Form from .lsf/memory/architecture-boundaries.md)
 - File Location: src/[app]/forms.py
 - Implementation: [FORM_NAME] class with validators
 - Configuration: Import in views.py
@@ -38,7 +38,7 @@ GREEN-004: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-101: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: React functional component (from architecture-boundaries-v3.md)
+- Component: React functional component (from .lsf/memory/architecture-boundaries.md)
 - File Location: src/frontend/src/components/[ComponentName].tsx
 - Implementation: [COMPONENT_NAME] with props interface
 - Configuration: Export from index.ts
@@ -46,7 +46,7 @@ GREEN-101: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-102: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: React hooks (useState/useEffect from architecture-boundaries-v3.md)
+- Component: React hooks (useState/useEffect from .lsf/memory/architecture-boundaries.md)
 - File Location: src/frontend/src/hooks/[hookName].ts
 - Implementation: [HOOK_NAME] with state management
 - Configuration: Export from hooks/index.ts
@@ -54,7 +54,7 @@ GREEN-102: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-103: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: Axios API client (from architecture-boundaries-v3.md)
+- Component: Axios API client (from .lsf/memory/architecture-boundaries.md)
 - File Location: src/frontend/src/services/[serviceName].ts
 - Implementation: [SERVICE_NAME] with API methods
 - Configuration: Import axios, configure base URL
@@ -62,7 +62,7 @@ GREEN-103: Implement [REQ-XXX] to pass [RED-XXX]
 
 GREEN-104: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: React Router (from architecture-boundaries-v3.md)
+- Component: React Router (from .lsf/memory/architecture-boundaries.md)
 - File Location: src/frontend/src/routes/[RouteName].tsx
 - Implementation: [ROUTE_COMPONENT] with navigation
 - Configuration: Add to router configuration
@@ -124,7 +124,7 @@ GREEN-SKIP-001: Verify existing implementation for [REQ-XXX]
 
 GREEN-REVIEW-001: Review requirement [REQ-XXX] for implementation
 - Reason: No existing component matches requirement
-- Analysis: Evaluated [COMPONENT_LIST] from architecture-boundaries-v3.md
+- Analysis: Evaluated [COMPONENT_LIST] from .lsf/memory/architecture-boundaries.md
 - Recommendation: [MINIMAL_EXTENSION] to existing component
 - Status: NEEDS-REVIEW
 
@@ -141,7 +141,7 @@ GREEN-VALIDATE-002: Verify no regressions
 - Success: Implementation doesn't break existing functionality
 
 GREEN-VALIDATE-003: Verify component boundaries respected
-- Check: All implementations use components from architecture-boundaries-v3.md
+- Check: All implementations use components from .lsf/memory/architecture-boundaries.md
 - Expected: No custom frameworks or dependencies
 - Success: Clean architecture compliance
 
@@ -150,5 +150,5 @@ GREEN-VALIDATE-003: Verify component boundaries respected
 Layer: 3B
 Type: green-phase
 Input: red-phase.md, requirements.md
-Dependencies: architecture-boundaries-v3.md
+Dependencies: .lsf/memory/architecture-boundaries.md
 -->

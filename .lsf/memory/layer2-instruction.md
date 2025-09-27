@@ -1,7 +1,7 @@
 # Layer 2 Derivation Instruction
 
 ## Required References
-- architecture-boundaries-v3.md (component constraints)
+- .lsf/memory/architecture-boundaries.md (component constraints)
 - nfr.yaml (performance/scale requirements)
 - Existing codebase patterns in src/
 
@@ -9,7 +9,7 @@
 - human-spec.md (Layer 1)
 
 ## Component Selection Process (MANDATORY)
-1. Check architecture-boundaries-v3.md Component Index
+1. Check .lsf/memory/architecture-boundaries.md Component Index
 2. Follow Decision Tree:
    - Django/React built-in? → USE IT
    - Existing pattern in codebase? → COPY IT
@@ -21,7 +21,7 @@
 ### Step 1: Map User Outcomes to Technical Requirements
 For each user outcome in human-spec.md:
 1. Identify the technical capability needed
-2. Find corresponding component in architecture-boundaries-v3.md
+2. Find corresponding component in .lsf/memory/architecture-boundaries.md
 3. Create requirement with existing component reference
 4. Assign REQ-XXX ID
 
@@ -95,7 +95,7 @@ REQ-001: Django auth.authenticate() validates credentials
 ```markdown
 REQ-001: [OUT-XXX]
 - Constraint: [WHAT must be done]
-- Component: [EXISTING component from architecture-boundaries-v3.md]
+- Component: [EXISTING component from .lsf/memory/architecture-boundaries.md]
 - Acceptance: [MEASURABLE criteria]
 ```
 
@@ -191,7 +191,7 @@ grep '^REQ-' requirements.md | grep -v '\[OUT-' # Should return nothing
 ## Success Criteria
 - All [OUT-XXX] from human-spec.md traced to requirements
 - All requirements reference their source [OUT-XXX]
-- All requirements use existing components from architecture-boundaries-v3.md
+- All requirements use existing components from .lsf/memory/architecture-boundaries.md
 - Zero custom implementations without written justification
 - Test coverage matches requirement scope (no over-testing)
 - Output is machine-parseable without ambiguity

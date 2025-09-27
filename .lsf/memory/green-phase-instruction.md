@@ -1,9 +1,10 @@
 # Green Phase Derivation Instruction
 
 ## Required References
+- .lsf/memory/environment-setup-checklist.md (pre-execution environment)
 - red-phase.md (Layer 3A output)
 - requirements.md (Layer 2)
-- architecture-boundaries-v3.md (component constraints)
+- .lsf/memory/architecture-boundaries.md (component constraints)
 - Existing codebase patterns in src/
 
 ## Input
@@ -16,7 +17,7 @@ Generate minimal implementation tasks to make each failing test pass using only 
 
 ## Component Selection Process (MANDATORY)
 1. For each RED-XXX task, identify the requirement REQ-XXX
-2. Check architecture-boundaries-v3.md Component Index for existing solution
+2. Check .lsf/memory/architecture-boundaries.md Component Index for existing solution
 3. Follow Decision Tree:
    - Django/React built-in? → USE IT
    - Existing pattern in codebase? → COPY IT
@@ -25,11 +26,24 @@ Generate minimal implementation tasks to make each failing test pass using only 
 
 ## Processing Rules
 
+### Step 0: Environment Verification
+1. Verify .lsf/memory/environment-setup-checklist.md requirements are met
+2. If environment not ready, output: "BLOCKED: Complete .lsf/memory/environment-setup-checklist.md first"
+3. Continue only if environment verified
+
 ### Step 1: Test Analysis
 1. Extract all RED-XXX tasks from red-phase.md
 2. Map each RED-XXX to its source REQ-XXX requirement
 3. Identify component type needed from requirement constraint
-4. Verify component exists in architecture-boundaries-v3.md
+4. Verify component exists in .lsf/memory/architecture-boundaries.md
+
+### Step 1.5: Secret Dependency Analysis
+For each GREEN-XXX task to be generated:
+1. Check if implementation requires external services
+2. Map external services to required secrets using Service Secret Mapping
+3. If secrets needed, output: "REQUIRES-SECRETS: [SECRET_LIST]"
+4. If secrets missing, output: "BLOCKED: Add secrets to .lsf/memory/environment-setup-checklist.md"
+5. Continue only if all required secrets available
 
 ### Step 2: Implementation Mapping
 For each RED-XXX:
@@ -62,13 +76,39 @@ For each RED-XXX:
 - API communication → Axios with Django views
 - Static files → Nginx serving React build
 
+## Service Secret Mapping
+
+**Authentication Services**:
+- Google OAuth → GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+- GitHub OAuth → GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
+- JWT tokens → SECRET_KEY (Django)
+
+**Email Services**:
+- SendGrid → SENDGRID_API_KEY, FROM_EMAIL
+- Mailgun → MAILGUN_API_KEY, MAILGUN_DOMAIN
+
+**Payment Services**:
+- Stripe → STRIPE_PUBLISHABLE_KEY, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+
+**Cloud Storage**:
+- AWS S3 → AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME
+- Google Cloud → GOOGLE_CLOUD_PROJECT, GOOGLE_APPLICATION_CREDENTIALS
+
+**Monitoring Services**:
+- Sentry → SENTRY_DSN
+- Google Analytics → GA_TRACKING_ID
+
+**External APIs**:
+- Custom API integration → [SERVICE]_API_KEY, [SERVICE]_BASE_URL
+- Webhook endpoints → [SERVICE]_WEBHOOK_SECRET
+
 ## Output Format
 
 ### GREEN Task Structure
 ```markdown
 GREEN-XXX: Implement [REQ-XXX] to pass [RED-XXX]
 - Traceability: [RED-XXX→REQ-XXX→OUT-XXX]
-- Component: [EXISTING component from architecture-boundaries-v3.md]
+- Component: [EXISTING component from .lsf/memory/architecture-boundaries.md]
 - File Location: src/[app]/[module].py OR src/frontend/src/[path]
 - Implementation: [MINIMAL code pattern to pass test]
 - Configuration: [Settings/imports needed]

@@ -4,13 +4,13 @@
 
 REQ-001: [OUT-XXX]
 - Constraint: [TECHNICAL_CONDITION]
-- Component: [EXISTING_COMPONENT from architecture-boundaries-v3.md]
+- Component: [EXISTING_COMPONENT from .lsf/memory/architecture-boundaries.md]
 - Acceptance: [MEASURABLE_CRITERIA]
 - Priority: [MUST|SHOULD]
 
 REQ-002: [OUT-XXX]
 - Constraint: [TECHNICAL_CONDITION]
-- Component: [EXISTING_COMPONENT from architecture-boundaries-v3.md]
+- Component: [EXISTING_COMPONENT from .lsf/memory/architecture-boundaries.md]
 - Acceptance: [MEASURABLE_CRITERIA]
 - Priority: [MUST|SHOULD]
 
@@ -39,7 +39,7 @@ REQ-301: [OUT-XXX]
 
 REQ-401: [OUT-XXX]
 - Constraint: [TECHNICAL_CONDITION]
-- Component: [EXISTING_COMPONENT from architecture-boundaries-v3.md]
+- Component: [EXISTING_COMPONENT from .lsf/memory/architecture-boundaries.md]
 - Acceptance: [MEASURABLE_CRITERIA]
 - Priority: [MUST|SHOULD]
 

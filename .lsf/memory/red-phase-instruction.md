@@ -1,10 +1,11 @@
 # Red Phase Derivation Instruction
 
 ## Required References
+- .lsf/memory/environment-setup-checklist.md (pre-execution environment)
 - requirements.md (Layer 2)
 - test-cases.md (Layer 2)
 - tests/ directory structure (existing patterns)
-- architecture-boundaries-v3.md (test infrastructure patterns)
+- .lsf/memory/architecture-boundaries.md (test infrastructure patterns)
 
 ## Input
 - requirements.md with REQ-XXX: [OUT-XXX] entries
@@ -14,6 +15,11 @@
 Generate failing test implementation tasks that verify each requirement through TDD red phase.
 
 ## Processing Rules
+
+### Step 0: Environment Verification
+1. Verify .lsf/memory/environment-setup-checklist.md requirements are met
+2. If environment not ready, output: "BLOCKED: Complete .lsf/memory/environment-setup-checklist.md first"
+3. Continue only if environment verified
 
 ### Step 1: Input Validation
 1. Extract all TEST-XXX entries from test-cases.md
