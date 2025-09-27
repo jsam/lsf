@@ -20,7 +20,7 @@ The purpose of the software factory is to produce industry grade software in a h
 5. **Focus**: This is a software factory, all artifacts created must contribute to efficient software production. Exclude all business/stakeholder related topics.
 6. **Boundaries**: make sure all tasks and functions are as cleanly separated as possible, blury boundaries will break the software factory
 7. **Drift Detection**: for bigger tasks, check whether your current activities are still serving the goal intially defined
-8. **Verification**: for implementations, verify that your output is functioning as intended/described. Use existing tests whenever possible.
+8. **Verification**: verify that your output is meeting the initial goal as required by spec and/or tasks. Use existing tests whenever possible.
 
 ## Article I: Core Development Principles
 
