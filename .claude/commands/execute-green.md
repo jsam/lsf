@@ -17,7 +17,9 @@ Generate minimal implementations from green phase tasks.
 3. Execute GREEN-INT integration tasks
 4. Execute GREEN-CONFIG configuration tasks
 5. Run verification to confirm all tests pass
-6. Report implementation summary
+6. Generate data-plane-current.yaml by listing all Django models with their fields
+7. If data-plane-target.yaml exists, run /check-data-plane
+8. Report implementation summary
 
 **Constitutional Compliance:**
 - Minimal viable implementation (Minimalism)

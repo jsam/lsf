@@ -9,14 +9,15 @@ Transform Layer 2 requirements/test cases into Layer 3A red phase tasks.
 
 **Implementation:**
 1. Parse TEST-XXX entries from test-cases.md
-2. For each test case:
+2. If data-plane-target.yaml exists, identify new entities/fields needed
+3. For each test case:
    - Create RED-XXX task for failing test implementation
    - Map test type to appropriate framework (pytest/Vitest)
    - Determine expected failure reason
    - Generate verification command
-3. Add RED-SETUP tasks for infrastructure needs
-4. Maintain traceability: TEST-XXX → REQ-XXX → OUT-XXX
-5. Run /discriminate-red on output automatically
+4. Add RED-SETUP tasks for infrastructure needs, including any new models from data-plane-target.yaml
+5. Maintain traceability: TEST-XXX → REQ-XXX → OUT-XXX
+6. Run /discriminate-red on output automatically
 
 **Constitutional Compliance:**
 - Test-first approach (Verification)
