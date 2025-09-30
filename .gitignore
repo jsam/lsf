@@ -324,3 +324,4 @@ test-results/
 # Docker development
 data/
 logs/
+.lsf/factory-state/
