@@ -33,9 +33,9 @@ class ApiClient {
     const url = `${this.baseUrl}${endpoint}`
 
     // GREEN-101: Add CSRF token to headers for POST/PUT/DELETE
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...options.headers as Record<string, string>,
     }
 
     if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method)) {

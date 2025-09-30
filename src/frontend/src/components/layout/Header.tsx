@@ -46,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({
   const menuItems = [
     { label: 'Profile', href: '/profile' },
     { label: 'Settings', href: '/settings' },
-    { divider: true },
+    { label: '', divider: true },
     { label: 'Sign out', onClick: handleLogout }
   ]
 

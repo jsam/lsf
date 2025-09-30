@@ -31,8 +31,9 @@ export default function Login() {
       justifyContent: 'center',
       backgroundColor: '#f5f5f5'
     }}>
-      <Card style={{ width: '400px', padding: '2rem' }}>
-        <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>Login</h1>
+      <div style={{ width: '400px' }}>
+        <Card padding="large">
+          <h1 style={{ marginBottom: '2rem', textAlign: 'center' }}>Login</h1>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
@@ -94,7 +95,8 @@ export default function Login() {
             {loading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
-      </Card>
+        </Card>
+      </div>
     </div>
   )
 }
