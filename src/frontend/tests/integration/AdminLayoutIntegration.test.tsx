@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, fireEvent, within, cleanup } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { BrowserRouter } from 'react-router-dom'
 import AdminLayout from '../../src/components/layout/AdminLayout'
@@ -53,6 +53,19 @@ describe('AdminLayout Integration Tests', () => {
       setCustomBreadcrumbs: vi.fn(),
       useRouteBreadcrumbs: vi.fn()
     })
+  })
+
+  afterEach(() => {
+    // Clean up after each test to prevent pollution
+    cleanup()
+    vi.clearAllMocks()
+    vi.restoreAllMocks()
+
+    // Reset window location
+    window.history.pushState({}, '', '/')
+
+    // Clear any DOM modifications
+    document.body.innerHTML = ''
   })
 
   it('renders full layout with navigation and content', () => {

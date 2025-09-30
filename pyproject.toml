@@ -17,13 +17,16 @@ dependencies = [
     "pydantic>=2.5.0",
     "gitpython>=3.1.40",
     "tomli>=2.0.1",
+    "anthropic>=0.39.0",
+    "pyyaml>=6.0.0",
 ]
 
 [project.scripts]
 lsf = "lsf.cli:main"
+factory = "factory.cli:main"
 
 [tool.setuptools]
-packages = ["lsf", "lsf.commands"]
+packages = ["lsf", "lsf.commands", "factory", "factory.tools"]
 
 [dependency-groups]
 dev = [
