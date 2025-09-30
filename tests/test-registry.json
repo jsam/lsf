@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "backend_integration": [
+      "tests/integration/api_workflows.py",
+      "tests/integration/build_workflows.py",
+      "tests/integration/frontend_workflows.py",
+      "tests/integration/runtime_workflows.py",
+      "tests/integration/service_health.py",
+      "tests/integration/task_workflows.py"
+    ],
+    "backend_unit": [],
+    "frontend_e2e": [
+      "tests/e2e/frontend/login.spec.js"
+    ],
+    "frontend_unit": []
+  },
+  "new": {
+    "backend_integration": [],
+    "backend_unit": [],
+    "frontend_e2e": [],
+    "frontend_unit": []
+  }
+}
