@@ -1,6 +1,8 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../navigation/Breadcrumbs'
 import UserMenu from '../navigation/UserMenu'
+import useAuth from '../../hooks/useAuthSession'
 import type { BreadcrumbItem, UserInfo } from './MenuTypes'
 
 export interface HeaderProps {
@@ -20,13 +22,33 @@ const Header: React.FC<HeaderProps> = ({
   onSidebarToggle,
   sidebarCollapsed
 }) => {
+  const { logout, user: authUser } = useAuth()
+  const navigate = useNavigate()
+
   const defaultUser: UserInfo = {
     name: 'Admin User',
     email: 'admin@lsf.dev',
     initials: 'AU'
   }
 
-  const user = userInfo || defaultUser
+  // Use authenticated user info if available
+  const user = userInfo || (authUser ? {
+    name: authUser.username,
+    email: authUser.username,
+    initials: authUser.username.substring(0, 2).toUpperCase()
+  } : defaultUser)
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
+
+  const menuItems = [
+    { label: 'Profile', href: '/profile' },
+    { label: 'Settings', href: '/settings' },
+    { divider: true },
+    { label: 'Sign out', onClick: handleLogout }
+  ]
 
   return (
     <div className={`layout-header ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -72,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* User menu */}
-          <UserMenu user={user} />
+          <UserMenu user={user} menuItems={menuItems} />
         </div>
       </div>
     </div>

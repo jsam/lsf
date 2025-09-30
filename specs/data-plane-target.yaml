@@ -1,0 +1,32 @@
+# Data Plane Target State
+
+## Entities
+
+### User (Existing - Django built-in)
+- id: integer (primary key)
+- username: string (unique, required)
+- password: string (hashed, required)
+- is_active: boolean (default true)
+- last_login: timestamp (nullable)
+- date_joined: timestamp
+
+### Session (Managed by Django sessions)
+- session_key: string (primary key, 40 chars)
+- session_data: text (base64 encoded)
+- expire_date: timestamp (indexed)
+
+## Relationships
+
+User → Session: one-to-many (implicit via session data)
+- User can have multiple active sessions (multiple devices/browsers)
+- Session stores user_id in encoded session_data
+- No explicit foreign key (Django manages internally)
+
+## Notes
+
+- All entities managed by Django built-in packages
+- No new models required for authentication feature
+- Migrations: none needed (User and Session tables already exist)
+- Session backend: django.contrib.sessions.backends.db (default)
+- User model: django.contrib.auth.models.User (built-in)
+- Session cleanup: `python manage.py clearsessions` (periodic maintenance)

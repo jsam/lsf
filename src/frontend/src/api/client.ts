@@ -6,6 +6,19 @@ interface ApiResponse<T = any> {
   status: number
 }
 
+// GREEN-101: CSRF token utility
+function getCsrfToken(): string {
+  const name = 'csrftoken'
+  const cookies = document.cookie.split(';')
+  for (let cookie of cookies) {
+    const trimmed = cookie.trim()
+    if (trimmed.startsWith(name + '=')) {
+      return trimmed.substring(name.length + 1)
+    }
+  }
+  return ''
+}
+
 class ApiClient {
   private baseUrl: string
 
@@ -19,12 +32,23 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`
 
+    // GREEN-101: Add CSRF token to headers for POST/PUT/DELETE
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    }
+
+    if (options.method && ['POST', 'PUT', 'DELETE'].includes(options.method)) {
+      const csrfToken = getCsrfToken()
+      if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken
+      }
+    }
+
     try {
       const response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
+        headers,
+        credentials: 'include',  // GREEN-101: Include credentials for session cookies
         ...options,
       })
 
