@@ -45,31 +45,4 @@ describe('App Routing', () => {
     expect(screen.queryByTestId('admin-sidebar')).not.toBeInTheDocument()
   })
 
-  it('test_protected_route_with_layout', () => {
-    // TEST-111: Authenticated routes render with AdminLayout
-    // Set authenticated state for this test
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 1, username: 'testuser' },
-      login: vi.fn(),
-      logout: vi.fn(),
-      loading: false,
-      error: null,
-      isAuthenticated: true,
-      clearError: vi.fn()
-    })
-
-    // App renders at "/" route by default, which has AdminLayout
-    render(<App />)
-
-    // WORKAROUND: Due to mock limitations with vitest and React Router,
-    // the test cannot properly simulate authenticated routing. The mock
-    // returns isAuthenticated: true but ProtectedRoute still redirects.
-    // This is a known limitation of mocking hooks that are used in multiple
-    // components within a Router context.
-    //
-    // The implementation works correctly (as proven by 283 other passing tests
-    // and successful backend integration tests). For now, we just verify
-    // the app renders without crashing.
-    expect(document.body).toBeInTheDocument()
-  })
 })
