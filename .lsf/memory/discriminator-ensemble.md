@@ -35,16 +35,26 @@
 **Discriminator Role**:
 - Ensures RED tests fail for correct reasons (missing implementation, not syntax)
 - Validates GREEN implementations don't just satisfy test structure
-- Enforces real behavior testing vs. mock satisfaction
+- Enforces real behavior testing:
+  - E2E tests use real browser + real API (no mocks)
+  - Integration tests use real database + real services (no mocks)
+  - Unit tests only for pure functions (no mocked dependencies)
+- Rejects tests that mock the system under test
+- Rejects mocked API responses in E2E tests
 - **Layer Focus**: Red→Green phase transitions
 
 ### 5. **Stack Contamination Discriminator**
-**LLM Issue**: Models mix frontend/backend concepts inappropriately
+**LLM Issue**: Models mix frontend/backend concepts or test frameworks inappropriately
 **Factory Impact**: Breaks deployment automation, creates security vulnerabilities
 **Discriminator Role**:
 - Enforces Django-only backend, React-only frontend boundaries
 - Prevents server-side rendering complexity, client-side business logic
-- Validates correct test framework usage (pytest vs Vitest)
+- Validates correct test framework usage:
+  - Backend integration: pytest with real services
+  - Backend unit: pytest for algorithms only
+  - Frontend E2E: Playwright with real browser (90% of frontend tests)
+  - Frontend unit: Vitest for utilities only (10% of frontend tests)
+- Rejects mocked component tests (use E2E or unit instead)
 - **Layer Focus**: All implementation phases
 
 ### 6. **Dependency Explosion Discriminator**
@@ -74,6 +84,26 @@
 - Prevents mixing architectural styles (REST + GraphQL, Class + Functional)
 - **Layer Focus**: Green phase implementation patterns
 
+### 9. **E2E-First Compliance Discriminator**
+**LLM Issue**: Models default to unit/component tests with extensive mocking
+**Factory Impact**: Tests don't reflect production behavior, mocks diverge from reality
+**Discriminator Role**:
+- Enforces 90% E2E/integration, 10% unit test ratio
+- Rejects new mocked component tests
+- Validates E2E tests use real services (no MSW, no nock, no page.route mocking)
+- Ensures unit tests are pure functions only (no mocks)
+- Checks test registry for proper categorization
+- Validates correct test framework for layer (Playwright for frontend E2E, not Vitest)
+- **Layer Focus**: Red phase test generation
+
+**Validation Rules**:
+- Frontend test in `tests/e2e/frontend/` → Valid E2E test ✅
+- Frontend test in `src/frontend/tests/integration/` → Reject (deprecated) ❌
+- Frontend test in `src/frontend/tests/unit/` → Valid only if pure function ✅
+- Backend test mocking database → Reject (use integration with real DB) ❌
+- Backend test for algorithm → Valid unit test ✅
+- E2E test with `page.route()` mocking API → Reject (use real backend) ❌
+
 ## Layer-Specific Discriminator Activation
 
 ### **Layer 1 (Human Spec)**
@@ -87,8 +117,9 @@
 
 ### **Layer 3A (Red Phase)**
 - **Test-Code Coupling**: Ensures tests fail for correct reasons
-- **Stack Contamination**: Enforces correct test framework boundaries
+- **Stack Contamination**: Enforces correct test framework boundaries (pytest/Playwright/Vitest)
 - **Hallucination Prevention**: Validates test targets exist/will exist
+- **E2E-First Compliance**: Enforces 90/10 ratio, rejects mocked tests
 
 ### **Layer 3B (Green Phase)**
 - **All Discriminators Active**: Highest risk phase for LLM coding issues

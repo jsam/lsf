@@ -52,6 +52,40 @@ For each RED-XXX:
 3. Generate minimal implementation to pass specific test
 4. Include exact file location and verification command
 
+### Step 2.5: Test Iteration Loop (MANDATORY)
+After implementing each GREEN-XXX or batch of tasks:
+1. Run ALL tests: `python3 tests/run_all_tests_parallelized.py --json-output`
+2. Parse JSON output:
+   - If `failed == 0`: All tests passing ✅ → PROCEED to next step
+   - If `failed > 0`:
+     - Analyze failures from JSON output (test names, error messages)
+     - Identify root cause (missing import, wrong status code, selector issue, etc.)
+     - Fix implementation
+     - Return to step 1 (re-run tests)
+3. Max iterations: Agent decides (typically 3-5 attempts is reasonable)
+4. If stuck after many iterations:
+   - Report failure to factory
+   - Request human intervention
+   - Document blocking issue
+
+**Iteration Example:**
+```
+Iteration 1: 25 passed, 3 failed
+  Analysis: Frontend E2E test failing - button selector wrong
+  Fix: Update button selector in React component
+
+Iteration 2: 26 passed, 2 failed
+  Analysis: Backend integration test failing - missing import
+  Fix: Add import statement
+
+Iteration 3: 27 passed, 1 failed
+  Analysis: API returning wrong status code
+  Fix: Change status.HTTP_200_OK to status.HTTP_201_CREATED
+
+Iteration 4: 28 passed, 0 failed ✅
+  PROCEED to promotion
+```
+
 ### Component Mapping Rules
 
 **Backend Implementation (Django)**:
@@ -66,15 +100,24 @@ For each RED-XXX:
 - UI components → React functional components
 - State management → useState/useContext hooks
 - Routing → React Router components
-- API calls → Axios client
+- API calls → Axios client (fetch API acceptable)
 - Forms → React controlled components
 - Styling → CSS modules
+
+**Frontend E2E Implementation (Playwright)**:
+- User workflows → Page navigation + interactions (page.goto, page.click, page.fill)
+- Form submissions → Real form fills + button clicks (no mocks)
+- API integration → Real backend calls (no route mocking)
+- Authentication → Real login flow (page.fill credentials, page.click submit)
+- Routing → Real URL navigation (page.goto, expect(page).toHaveURL)
+- Assertions → UI state verification (toBeVisible, toHaveText, toContainText)
 
 **Integration Implementation**:
 - Database → PostgreSQL via Django ORM
 - Queue → Redis via Celery
 - API communication → Axios with Django views
 - Static files → Nginx serving React build
+- E2E testing → Playwright with real browser + real backend
 
 ## Service Secret Mapping
 
@@ -176,6 +219,79 @@ export const useApi = () => {
 };
 ```
 
+### Playwright E2E Patterns
+```javascript
+// E2E Test Pattern - User Workflow
+test('user registration workflow', async ({ page }) => {
+  // Navigate to page
+  await page.goto('http://localhost:3000/register');
+
+  // Fill form fields
+  await page.fill('[name="email"]', 'test@example.com');
+  await page.fill('[name="password"]', 'secure123');
+
+  // Submit form
+  await page.click('button[type="submit"]');
+
+  // Verify UI state
+  await expect(page).toHaveURL(/\/dashboard/);
+  await expect(page.locator('.welcome-message')).toBeVisible();
+
+  // Verify backend state via API
+  const response = await page.request.get('http://localhost:8000/api/users/me');
+  expect(response.status()).toBe(200);
+  expect(await response.json()).toMatchObject({ email: 'test@example.com' });
+});
+
+// E2E Test Pattern - Complete Workflow
+test('complete purchase workflow', async ({ page }) => {
+  // Login
+  await page.goto('http://localhost:3000/login');
+  await page.fill('[name="email"]', 'user@example.com');
+  await page.fill('[name="password"]', 'password');
+  await page.click('button[type="submit"]');
+
+  // Add to cart
+  await page.goto('http://localhost:3000/products/1');
+  await page.click('button:has-text("Add to Cart")');
+  await expect(page.locator('.cart-count')).toHaveText('1');
+
+  // Checkout
+  await page.click('a[href="/cart"]');
+  await page.click('button:has-text("Checkout")');
+  await expect(page.locator('.order-confirmation')).toBeVisible();
+});
+```
+
+**E2E Implementation Rules:**
+- ✅ Use real browser automation (no JSDOM)
+- ✅ Use real backend API (no mocked routes)
+- ✅ Test complete user workflows (login → action → verify)
+- ✅ Verify both UI state AND backend state
+- ❌ NO mocking of API responses
+- ❌ NO component testing in isolation
+
+## Test Registry Promotion (After All Tests Pass)
+
+Once iteration loop completes with `failed == 0`:
+```python
+import json
+from pathlib import Path
+
+# Load registry
+registry = json.loads(Path("tests/test-registry.json").read_text())
+
+# Move all new tests to baseline
+for category in ["backend_integration", "backend_unit", "frontend_e2e", "frontend_unit"]:
+    registry["baseline"][category].extend(registry["new"][category])
+    registry["new"][category] = []
+
+# Write atomically
+Path("tests/test-registry.json").write_text(json.dumps(registry, indent=2))
+```
+
+**Rationale:** Tests are now part of baseline for next iteration
+
 ## Task Ordering Rules
 
 1. **Models First**: Django models before views
@@ -186,21 +302,28 @@ export const useApi = () => {
 ## Forbidden Patterns
 
 - Custom implementations when existing component works
-- Framework additions not in architecture-boundaries-v3.md
+- Framework additions not in architecture-boundaries.md
 - Complex abstractions over simple solutions
 - Business logic in views (Django) or components (React)
 - Cross-stack implementations (Django in frontend, React in backend)
 - Over-engineering beyond test requirements
+- Mocking API responses in E2E tests (use real backend)
+- Component tests with mocks (use E2E for workflows, unit for utilities)
+- Frontend integration tests with Vitest (deprecated - use E2E or unit)
 
 ## Validation Checklist
 
 - [ ] Every RED-XXX → corresponding GREEN-XXX implementation
-- [ ] All components reference architecture-boundaries-v3.md
+- [ ] All components reference architecture-boundaries.md
 - [ ] No custom frameworks or new dependencies
 - [ ] Implementation is minimal to pass test only
 - [ ] Stack boundaries respected (Django/React separation)
 - [ ] Integration tasks cover component connections
 - [ ] All verification commands executable
+- [ ] Test iteration loop completed (all tests passing)
+- [ ] Test registry promoted (new → baseline)
+- [ ] No mocked API responses in E2E tests
+- [ ] 90/10 ratio maintained (integration/E2E vs unit)
 
 ## Edge Cases
 

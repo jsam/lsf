@@ -28,12 +28,17 @@ For each user outcome in human-spec.md:
 ### Step 2: Generate Test Specifications
 For each requirement:
 1. Determine test type needed:
-   - API endpoint → Integration test
-   - External system → Contract test
-   - Performance constraint → Load test
-   - Algorithm → Unit test (rare)
+   - Backend API endpoint → Backend Integration test (pytest)
+   - Backend algorithm → Backend Unit test (pytest, rare)
+   - Frontend user workflow → Frontend E2E test (Playwright)
+   - Frontend utility function → Frontend Unit test (Vitest, rare)
 2. Create 1-3 tests maximum per requirement
 3. Link TEST-XXX to REQ-XXX
+
+**E2E-First Test Selection:**
+- Default: Integration (backend) or E2E (frontend)
+- Exception: Unit tests for pure algorithms/utilities only
+- No mocking: Use real services, real browser
 
 ## Transformation Rules
 
@@ -102,11 +107,17 @@ REQ-001: [OUT-XXX]
 ### test-cases.md Structure
 ```markdown
 TEST-001: [REQ-001]
-- Type: [Integration|Contract|Load|Unit]
+- Type: [Backend Integration|Backend Unit|Frontend E2E|Frontend Unit]
 - Input: [EXACT data/action]
 - Expected: [EXACT output/behavior]
-- Verify: `pytest tests/[path]`
+- Verify: `pytest tests/integration/[path]` OR `cd tests/e2e/frontend && npx playwright test [file]`
 ```
+
+**Type Selection Rules:**
+- Backend API/database → Backend Integration
+- Backend calculation → Backend Unit (rare)
+- Frontend workflow → Frontend E2E (PRIMARY)
+- Frontend utility → Frontend Unit (rare)
 
 ## Validation Checklist
 - [ ] Every [OUT-XXX] from human-spec.md → at least one requirement
@@ -126,6 +137,8 @@ TEST-001: [REQ-001]
 - Implementation details in requirements
 - More than 3 tests per requirement
 - Unit tests for CRUD operations
+- Mocked component tests (use E2E instead)
+- Frontend integration tests with mocked APIs (use E2E with real backend)
 
 ## Edge Cases
 
@@ -160,17 +173,19 @@ REQ-002: [OUT-001]
 
 Output (test-cases.md):
 TEST-001: [REQ-001]
-- Type: Integration
+- Type: Backend Integration
 - Input: GET /api/tasks/
 - Expected: 200 with JSON array
 - Verify: `pytest tests/integration/test_tasks.py::test_list`
 
 TEST-002: [REQ-002]
-- Type: Integration
-- Input: Navigate to /tasks
-- Expected: Task list renders
-- Verify: `npm test -- TaskList.test.tsx`
+- Type: Frontend E2E
+- Input: Navigate to http://localhost:3000/tasks
+- Expected: Task list displays in browser
+- Verify: `cd tests/e2e/frontend && npx playwright test tasks.spec.js`
 ```
+
+**Note:** Use E2E test for frontend workflow, not component test. Tests run against real browser + real API.
 
 ## Traceability Validation
 Run these checks before finalizing:

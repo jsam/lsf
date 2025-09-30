@@ -93,55 +93,93 @@ class RequirementsToRedTransformer:
         if 'Backend' in test_type:
             if 'Integration' in test_type:
                 return f'tests/integration/test_feature_{test_num}.py'
-            elif 'Contract' in test_type:
-                return f'tests/contract/test_api_{test_num}.py'
             elif 'Unit' in test_type:
                 return f'tests/unit/test_module_{test_num}.py'
             else:
-                return f'tests/test_{test_num}.py'
+                # Default to integration for backend
+                return f'tests/integration/test_feature_{test_num}.py'
+
         elif 'Frontend' in test_type:
-            if 'Integration' in test_type:
-                return f'src/frontend/tests/integration/Feature{test_num}.test.tsx'
+            if 'E2E' in test_type:
+                # PRIMARY - Playwright E2E tests (90%)
+                return f'tests/e2e/frontend/feature_{test_num}.spec.js'
             elif 'Unit' in test_type:
-                return f'src/frontend/tests/unit/module{test_num}.test.ts'
+                # MINIMAL - Vitest unit tests (10%)
+                return f'src/frontend/tests/unit/module_{test_num}.test.js'
             else:
-                return f'src/frontend/tests/test_{test_num}.tsx'
-        elif 'Load' in test_type:
-            return f'tests/performance/test_load_{test_num}.py'
+                # Default to E2E for frontend
+                return f'tests/e2e/frontend/feature_{test_num}.spec.js'
+
         else:
-            return f'tests/integration/test_{test_num}.py'
+            # Default to backend integration
+            return f'tests/integration/test_feature_{test_num}.py'
 
     def determine_function_name(self, test_id: str, test_type: str) -> str:
         """Generate function name for test"""
         test_num = re.search(r'\d+', test_id).group()
 
-        if 'Backend' in test_type or 'Load' in test_type:
+        if 'Backend' in test_type:
+            # pytest naming
             return f'test_scenario_{test_num}()'
         elif 'Frontend' in test_type:
-            return f'test_component_{test_num}()'
+            if 'E2E' in test_type:
+                # Playwright test naming (JavaScript)
+                return f"test('scenario {test_num}')"
+            elif 'Unit' in test_type:
+                # Vitest test naming (JavaScript)
+                return f"test('unit {test_num}')"
+            else:
+                # Default to E2E naming
+                return f"test('scenario {test_num}')"
         else:
-            return f'test_case_{test_num}()'
+            return f'test_scenario_{test_num}()'
 
     def determine_expected_failure(self, test_type: str, input_data: str) -> str:
         """Determine expected failure reason"""
-        if 'model' in input_data.lower() or 'Model' in input_data:
-            return 'ImportError (Model not implemented)'
-        elif 'api' in input_data.lower() or '/api/' in input_data:
-            return 'URLError (API endpoint not implemented)'
-        elif 'Component' in input_data:
-            return 'Component not implemented'
-        elif 'task' in input_data.lower():
-            return 'ImportError (Task not implemented)'
+        # Frontend E2E tests
+        if 'Frontend' in test_type and 'E2E' in test_type:
+            if 'navigate' in input_data.lower() or 'goto' in input_data.lower():
+                return 'Route not found or page not implemented'
+            elif 'click' in input_data.lower() or 'fill' in input_data.lower():
+                return 'Element not found (feature not implemented)'
+            else:
+                return 'Feature not implemented'
+
+        # Backend tests
+        elif 'Backend' in test_type:
+            if 'model' in input_data.lower() or 'Model' in input_data:
+                return 'ImportError (Model not implemented)'
+            elif 'api' in input_data.lower() or '/api/' in input_data:
+                return 'URLError (API endpoint not implemented - 404)'
+            elif 'task' in input_data.lower():
+                return 'ImportError (Task not implemented)'
+            else:
+                return 'NotImplementedError or ImportError'
+
+        # Frontend Unit tests
+        elif 'Frontend' in test_type and 'Unit' in test_type:
+            return 'Function not defined'
+
         else:
-            return 'Function/Module not implemented'
+            return 'NotImplementedError'
 
     def generate_verify_command(self, file_location: str, function_name: str) -> str:
         """Generate verification command for test"""
         func_without_parens = function_name.replace('()', '')
 
         if file_location.endswith('.py'):
+            # Backend pytest tests
             return f'pytest {file_location}::{func_without_parens} --tb=short'
+        elif file_location.endswith('.spec.js'):
+            # Frontend E2E Playwright tests
+            filename = Path(file_location).name
+            return f'cd tests/e2e/frontend && npx playwright test {filename}'
+        elif file_location.endswith(('.test.js', '.test.ts')):
+            # Frontend unit Vitest tests
+            filename = Path(file_location).name
+            return f'cd src/frontend && npm run test:unit -- {filename}'
         elif file_location.endswith(('.tsx', '.ts')):
+            # Legacy frontend tests (deprecated)
             filename = Path(file_location).name
             return f'npm test -- {filename}'
         else:

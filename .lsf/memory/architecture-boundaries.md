@@ -30,7 +30,8 @@
 - **State Management**: React useState/useContext (no Redux)
 - **Routing**: React Router DOM
 - **HTTP Client**: Axios
-- **Testing**: Vitest with Testing Library
+- **E2E Testing**: Playwright (`@playwright/test`) - 90% of frontend tests
+- **Unit Testing**: Vitest with Testing Library - 10% of frontend tests (utilities only)
 - **Build**: Vite
 - **Type Checking**: TypeScript
 
@@ -91,13 +92,46 @@
 **Structure**:
 ```
 tests/
-├── integration/*_workflows.py    # Feature workflows
-├── unit/test_*.py                # Complex algorithms only
-└── e2e/smoke.py                  # System operational tests
+├── test-registry.json                    # Test lifecycle tracking (baseline vs new)
+├── integration/                          # Backend integration tests (90%)
+│   ├── api_workflows.py
+│   ├── task_workflows.py
+│   └── test_*.py                        # Real services, real database
+├── unit/                                 # Backend unit tests (10%)
+│   └── test_*.py                        # Pure algorithms only, no mocks
+├── e2e/
+│   ├── frontend/                        # Frontend E2E tests (90%)
+│   │   ├── playwright.config.js
+│   │   ├── *.spec.js                   # Real browser, real API
+│   │   └── package.json
+│   └── smoke.py                         # System smoke test (max 3)
+└── run_all_tests_parallelized.py       # Registry-based test runner
 ```
-**Test Naming**: `test_feature_scenario()` for functions
+
+**Frontend Testing (E2E-First)**:
+- Primary: Playwright E2E tests in `tests/e2e/frontend/` (90% of frontend tests)
+- Minimal: Vitest unit tests in `src/frontend/tests/unit/` (10% - utilities only)
+- Deprecated: Component integration tests (migrate to E2E or unit)
+
+**Backend Testing (Integration-First)**:
+- Primary: pytest integration tests in `tests/integration/` (90% of backend tests)
+- Minimal: pytest unit tests in `tests/unit/` (10% - algorithms only)
+- No mocking: All tests use real services (Docker)
+
+**Test Registry**:
+- Location: `tests/test-registry.json`
+- Categories: `backend_integration`, `backend_unit`, `frontend_e2e`, `frontend_unit`
+- Sections: `baseline` (promoted tests), `new` (RED phase tests)
+- Purpose: Track test lifecycle, enable selective execution
+
+**Test Runner**:
+- Script: `tests/run_all_tests_parallelized.py`
+- Flags: `--baseline-only`, `--new-only`, `--json-output`
+- Capabilities: Registry-based execution, Playwright support, parallel execution
+
+**Test Naming**: `test_feature_scenario()` for Python, `test('scenario')` for JavaScript
 **Test IDs**: `TEST-001` format for traceability
-**Verification**: `pytest tests/unit/ -v` / `tests/run_all_tests_parallelized.py`
+**Verification**: `python3 tests/run_all_tests_parallelized.py --baseline-only --json-output`
 
 ## Architecture Constraints
 

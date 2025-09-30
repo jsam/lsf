@@ -101,6 +101,39 @@ services:
       # Add service-specific secrets as needed
 ```
 
+## Test Infrastructure Setup
+
+### Test Registry Initialization
+Ensure `tests/test-registry.json` exists with structure:
+```json
+{
+  "baseline": {
+    "backend_integration": [],
+    "backend_unit": [],
+    "frontend_e2e": [],
+    "frontend_unit": []
+  },
+  "new": {
+    "backend_integration": [],
+    "backend_unit": [],
+    "frontend_e2e": [],
+    "frontend_unit": []
+  }
+}
+```
+
+### Playwright Configuration
+Ensure `tests/e2e/frontend/playwright.config.js` exists with:
+- Base URL: `http://localhost:3000` (dev server)
+- API URL: `http://localhost:8000` (backend)
+- Retries, traces, screenshots configured
+
+### Test Runner Enhancement
+Ensure `tests/run_all_tests_parallelized.py` supports:
+- `--baseline-only`: Run only baseline tests
+- `--new-only`: Run only new tests
+- `--json-output`: Output structured JSON results
+
 ## Verification Commands
 
 ### Backend Verification
@@ -114,14 +147,30 @@ celery -A django_celery_base inspect ping # Celery/Redis connectivity
 ### Frontend Verification
 ```bash
 cd src/frontend/
-npm test -- --run                        # Test environment
+npm test -- --run                        # Vitest unit test environment
 npm run build                            # Build process
+npm run dev                              # Dev server (required for E2E tests)
+```
+
+### Frontend E2E Testing (Playwright)
+```bash
+cd tests/e2e/frontend/
+npm install                              # Install Playwright dependencies
+npx playwright install                   # Install browser binaries
+npx playwright test --list               # Verify tests discoverable
+```
+
+### Test Registry Verification
+```bash
+python3 tests/run_all_tests_parallelized.py --baseline-only --json-output  # Baseline tests
+python3 tests/run_all_tests_parallelized.py --json-output                  # All tests
+# Expected: {"total": N, "passed": N, "failed": 0, "skipped": 0, "errors": 0}
 ```
 
 ### Full System Verification
 ```bash
-docker compose up --build                # Full stack startup
-tests/run_all_tests_parallelized.py      # Complete test suite
+docker compose up --build                                    # Full stack startup
+python3 tests/run_all_tests_parallelized.py --json-output   # Complete test suite with registry
 ```
 
 ## Secret Discovery Process
