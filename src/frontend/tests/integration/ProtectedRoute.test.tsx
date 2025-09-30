@@ -4,7 +4,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
 
 // Create mockable auth state
@@ -38,7 +38,7 @@ describe('ProtectedRoute Component', () => {
     mockAuthState.isAuthenticated = false
 
     render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={['/dashboard']}>
         <Routes>
           <Route path="/login" element={<div>Login Page</div>} />
           <Route
@@ -50,7 +50,7 @@ describe('ProtectedRoute Component', () => {
             }
           />
         </Routes>
-      </BrowserRouter>
+      </MemoryRouter>
     )
 
     // Expected: User redirected to /login
@@ -63,7 +63,7 @@ describe('ProtectedRoute Component', () => {
     mockAuthState.isAuthenticated = true
 
     render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={['/dashboard']}>
         <Routes>
           <Route
             path="/dashboard"
@@ -74,7 +74,7 @@ describe('ProtectedRoute Component', () => {
             }
           />
         </Routes>
-      </BrowserRouter>
+      </MemoryRouter>
     )
 
     // Expected: Dashboard component renders

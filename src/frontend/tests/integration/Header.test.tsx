@@ -43,8 +43,12 @@ describe('Header Logout', () => {
       </BrowserRouter>
     )
 
-    // Find and click logout button
-    const logoutButton = screen.getByRole('button', { name: /logout/i })
+    // Open user menu dropdown first
+    const userMenuButton = screen.getByRole('button', { name: /user menu/i })
+    fireEvent.click(userMenuButton)
+
+    // Find and click sign out button
+    const logoutButton = screen.getByText(/sign out/i)
     fireEvent.click(logoutButton)
 
     // Expected: POST /api/auth/logout/ called, user state null, navigation to /login
