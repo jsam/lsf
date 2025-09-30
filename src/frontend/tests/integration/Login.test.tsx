@@ -7,16 +7,20 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import Login from '../../src/pages/Login'
 
+// Create mockable auth state
+const mockAuthState = {
+  user: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  loading: false,
+  error: null,
+  isAuthenticated: false,
+  clearError: vi.fn()
+}
+
 // Mock useAuth hook
 vi.mock('../../src/hooks/useAuth', () => ({
-  default: () => ({
-    user: null,
-    login: vi.fn(),
-    logout: vi.fn(),
-    loading: false,
-    error: null,
-    isAuthenticated: false
-  })
+  default: () => mockAuthState
 }))
 
 // Mock useNavigate
@@ -32,6 +36,14 @@ vi.mock('react-router-dom', async () => {
 describe('Login Component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock state
+    mockAuthState.user = null
+    mockAuthState.loading = false
+    mockAuthState.error = null
+    mockAuthState.isAuthenticated = false
+    mockAuthState.login = vi.fn()
+    mockAuthState.logout = vi.fn()
+    mockAuthState.clearError = vi.fn()
   })
 
   it('test_login_form_renders', () => {
@@ -50,15 +62,7 @@ describe('Login Component', () => {
 
   it('test_login_form_submission', async () => {
     // TEST-102: User types credentials and clicks submit
-    const mockLogin = vi.fn().mockResolvedValue(true)
-    vi.mocked(useAuth).mockReturnValue({
-      user: null,
-      login: mockLogin,
-      logout: vi.fn(),
-      loading: false,
-      error: null,
-      isAuthenticated: false
-    })
+    mockAuthState.login = vi.fn().mockResolvedValue(true)
 
     render(
       <BrowserRouter>
@@ -78,7 +82,7 @@ describe('Login Component', () => {
 
     // Expected: POST /api/auth/login/ called, session cookie stored by browser
     await waitFor(() => {
-      expect(mockLogin).toHaveBeenCalledWith({
+      expect(mockAuthState.login).toHaveBeenCalledWith({
         username: 'testuser',
         password: 'testpass123'
       })
@@ -87,14 +91,7 @@ describe('Login Component', () => {
 
   it('test_login_error_display', () => {
     // TEST-103: API returns 401, component displays error message
-    vi.mocked(useAuth).mockReturnValue({
-      user: null,
-      login: vi.fn(),
-      logout: vi.fn(),
-      loading: false,
-      error: 'Invalid credentials',
-      isAuthenticated: false
-    })
+    mockAuthState.error = 'Invalid credentials'
 
     render(
       <BrowserRouter>

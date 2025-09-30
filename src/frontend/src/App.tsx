@@ -4,8 +4,8 @@ import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Login from './pages/Login'
 import ProtectedRoute from './components/ProtectedRoute'
-import { AuthContext } from './hooks/useAuthSession'
-import useAuth from './hooks/useAuthSession'
+import { AuthContext } from './hooks/useAuth'
+import useAuth from './hooks/useAuth'
 
 function App() {
   const auth = useAuth()

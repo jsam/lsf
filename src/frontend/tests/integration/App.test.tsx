@@ -4,24 +4,32 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { BrowserRouter } from 'react-router-dom'
 import App from '../../src/App'
+
+// Create mockable auth state
+const mockAuthState = {
+  user: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  loading: false,
+  error: null,
+  isAuthenticated: false,
+  clearError: vi.fn()
+}
 
 // Mock useAuth hook
 vi.mock('../../src/hooks/useAuth', () => ({
-  default: () => ({
-    user: null,
-    login: vi.fn(),
-    logout: vi.fn(),
-    loading: false,
-    error: null,
-    isAuthenticated: false
-  })
+  default: () => mockAuthState
 }))
 
 describe('App Routing', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock state
+    mockAuthState.user = null
+    mockAuthState.loading = false
+    mockAuthState.error = null
+    mockAuthState.isAuthenticated = false
   })
 
   it('test_login_route_no_layout', () => {
@@ -37,14 +45,8 @@ describe('App Routing', () => {
 
   it('test_protected_route_with_layout', () => {
     // TEST-111: Authenticated routes render with AdminLayout
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 1, username: 'testuser' },
-      login: vi.fn(),
-      logout: vi.fn(),
-      loading: false,
-      error: null,
-      isAuthenticated: true
-    })
+    mockAuthState.user = { id: 1, username: 'testuser' }
+    mockAuthState.isAuthenticated = true
 
     window.history.pushState({}, '', '/dashboard')
 

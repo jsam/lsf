@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import Breadcrumbs from '../navigation/Breadcrumbs'
 import UserMenu from '../navigation/UserMenu'
-import useAuth from '../../hooks/useAuthSession'
+import useAuth from '../../hooks/useAuth'
 import type { BreadcrumbItem, UserInfo } from './MenuTypes'
 
 export interface HeaderProps {

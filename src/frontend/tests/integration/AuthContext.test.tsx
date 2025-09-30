@@ -4,7 +4,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, waitFor } from '@testing-library/react'
-import { useAuth } from '../../src/hooks/useAuth'
+import useAuth from '../../src/hooks/useAuth'
 
 // Mock API client
 vi.mock('../../src/api/client', () => ({

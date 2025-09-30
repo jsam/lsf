@@ -4,9 +4,9 @@
  */
 import { useState, FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import useAuth from '../hooks/useAuthSession'
-import { Card } from '../components/ui/Card'
-import { Button } from '../components/ui/Button'
+import useAuth from '../hooks/useAuth'
+import Card from '../components/ui/Card'
+import Button from '../components/ui/Button'
 
 export default function Login() {
   const [username, setUsername] = useState('')

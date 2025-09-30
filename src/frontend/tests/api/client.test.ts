@@ -19,6 +19,7 @@ describe('ApiClient', () => {
     await apiClient.get('/test')
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -27,6 +28,12 @@ describe('ApiClient', () => {
   })
 
   test('makes POST request with data', async () => {
+    // Mock CSRF cookie
+    Object.defineProperty(document, 'cookie', {
+      writable: true,
+      value: 'csrftoken=test-csrf-token'
+    })
+
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({ success: true })
@@ -36,8 +43,10 @@ describe('ApiClient', () => {
     await apiClient.post('/test', testData)
 
     expect(mockFetch).toHaveBeenCalledWith('/api/test', {
+      credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-CSRFToken': 'test-csrf-token'
       },
       method: 'POST',
       body: JSON.stringify(testData)

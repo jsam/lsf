@@ -7,33 +7,35 @@ import { render, screen } from '@testing-library/react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from '../../src/components/ProtectedRoute'
 
+// Create mockable auth state
+const mockAuthState = {
+  user: null,
+  login: vi.fn(),
+  logout: vi.fn(),
+  loading: false,
+  error: null,
+  isAuthenticated: false,
+  clearError: vi.fn()
+}
+
 // Mock useAuth hook
 vi.mock('../../src/hooks/useAuth', () => ({
-  default: () => ({
-    user: null,
-    login: vi.fn(),
-    logout: vi.fn(),
-    loading: false,
-    error: null,
-    isAuthenticated: false
-  })
+  default: () => mockAuthState
 }))
 
 describe('ProtectedRoute Component', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Reset mock state to unauthenticated
+    mockAuthState.user = null
+    mockAuthState.loading = false
+    mockAuthState.error = null
+    mockAuthState.isAuthenticated = false
   })
 
   it('test_redirect_when_unauthenticated', () => {
     // TEST-107: Unauthenticated user navigates to protected route
-    vi.mocked(useAuth).mockReturnValue({
-      user: null,
-      login: vi.fn(),
-      logout: vi.fn(),
-      loading: false,
-      error: null,
-      isAuthenticated: false
-    })
+    mockAuthState.isAuthenticated = false
 
     render(
       <BrowserRouter>
@@ -57,14 +59,8 @@ describe('ProtectedRoute Component', () => {
 
   it('test_render_when_authenticated', () => {
     // TEST-108: Authenticated user navigates to protected route
-    vi.mocked(useAuth).mockReturnValue({
-      user: { id: 1, username: 'testuser' },
-      login: vi.fn(),
-      logout: vi.fn(),
-      loading: false,
-      error: null,
-      isAuthenticated: true
-    })
+    mockAuthState.user = { id: 1, username: 'testuser' }
+    mockAuthState.isAuthenticated = true
 
     render(
       <BrowserRouter>
